@@ -15,6 +15,7 @@ public class PlayerScript : MonoBehaviour
     bool nearSomething;
 
     Text interactText;
+    Slider healthSlider;
 
     void Start()
     {
@@ -27,6 +28,9 @@ public class PlayerScript : MonoBehaviour
 
         interactText = GameObject.Find("interactText").GetComponent<Text>();
         interactText.gameObject.SetActive(false);
+
+        healthSlider = GameObject.Find("healthSlider").GetComponent<Slider>();
+        healthSlider.value = 100; //to be updated later
     }
 
     void Update()
@@ -66,7 +70,6 @@ public class PlayerScript : MonoBehaviour
         {
             TakeDamage();
         }
-
         else
         {
             triggerObject = other.gameObject.tag;
@@ -85,6 +88,7 @@ public class PlayerScript : MonoBehaviour
             nearSomething = false;
             interactText.gameObject.SetActive(false);
         }
+
     }
 
     void Shoot()
