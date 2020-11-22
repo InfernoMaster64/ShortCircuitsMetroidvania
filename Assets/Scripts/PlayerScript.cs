@@ -7,12 +7,20 @@ using UnityEngine.SceneManagement;
 public class PlayerScript : MonoBehaviour
 {
     Rigidbody2D rigid;
-    bool onGround;
     float moveSpeed;
+
+    bool onGround;
+    bool isJumping;
     float jumpForce;
+    float jumpCounter; //count air time
+    float jumpTimer; //max air time
 
     string triggerObject;
     bool nearSomething;
+
+
+
+
 
     Text interactText;
     Slider healthSlider;
@@ -20,9 +28,13 @@ public class PlayerScript : MonoBehaviour
     void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
+        moveSpeed = .05f;
+
         onGround = true;
-        moveSpeed = .1f;
+        isJumping = false;
         jumpForce = 10;
+
+        jumpTimer = .35f;
 
         nearSomething = false;
 
@@ -37,22 +49,45 @@ public class PlayerScript : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            transform.position = new Vector3(transform.position.x - moveSpeed, transform.position.y, transform.position.z);
+            Move(-moveSpeed);
         }
         else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            transform.position = new Vector3(transform.position.x + moveSpeed, transform.position.y, transform.position.z);
+            Move(moveSpeed);
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && onGround) //cannot jump if not touching ground
         {
-            rigid.velocity = Vector2.up * jumpForce;
+            rigid.velocity = Vector2.up * (jumpForce / 2);
             onGround = false;
+            isJumping = true;
+            jumpCounter = jumpTimer;
+        }
+        if (Input.GetKey(KeyCode.Space) && isJumping) //tap space to jump, hold space to jump higher
+        {
+            if (jumpCounter > 0)
+            {
+                rigid.velocity = Vector2.up * jumpForce;
+                jumpCounter -= Time.deltaTime;
+            }
+            else
+            {
+                isJumping = false;
+            }
+        }
+        if (Input.GetKeyUp(KeyCode.Space) && isJumping) //if space is released before jumpCounter reaches 0,
+        {
+            isJumping = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.E) && triggerObject != "")
+        if (Input.GetKeyDown(KeyCode.E) && nearSomething)
         {
             Interact(triggerObject); //near a door? Press E to enter. Near an NPC? Press E to talk
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            Shoot();
         }
     }
 
@@ -74,9 +109,11 @@ public class PlayerScript : MonoBehaviour
         {
             triggerObject = other.gameObject.tag;
             nearSomething = true;
-            Debug.Log("String is " + triggerObject);
+            
             interactText.text = "Press 'E' to enter " + triggerObject;
             interactText.gameObject.SetActive(true);
+
+            Debug.Log("Interacting with: " + triggerObject);
         }
     }
 
@@ -91,6 +128,11 @@ public class PlayerScript : MonoBehaviour
 
     }
 
+    void Move(float direction)
+    {
+        transform.position = new Vector3(transform.position.x + direction, transform.position.y, transform.position.z);
+    }
+
     void Shoot()
     {
 
@@ -103,6 +145,23 @@ public class PlayerScript : MonoBehaviour
 
     void Interact(string type) //near a door? Tell the player to press "E" to go through it
     {
-        Debug.Log("String is " + type);
+        switch (type)
+        {
+            case "Castle":
+                Debug.Log("You entered the creepy " + type);
+                break;
+            case "Crypt":
+                Debug.Log("You entered the haunted " + type);
+                break;
+            case "Swamp":
+                Debug.Log("You entered the spooky " + type);
+                break;
+            case "Town":
+                Debug.Log("You entered the boring " + type);
+                break;
+            case "NPC": //temporary term
+                Debug.Log("Dab");
+                break;
+        }
     }
 }
