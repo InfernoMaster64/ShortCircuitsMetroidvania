@@ -9,32 +9,29 @@ public class PlayerScript : MonoBehaviour
     Rigidbody2D rigid;
     float moveSpeed;
 
-    bool onGround;
-    bool isJumping;
-    float jumpForce;
-    float jumpCounter; //count air time
-    float jumpTimer; //max air time
+    bool onGround, isJumping;
+    float jumpForce, jumpCounter, jumpTime; //power of jumping, current jump time, max jump time
 
     string triggerObject;
     bool nearSomething;
 
-
-
-
-
     Text interactText;
     Slider healthSlider;
 
+    StatsScript stats;
+
     void Start()
     {
+        stats = gameObject.GetComponent<StatsScript>();
+        SetLevel();
+
         rigid = GetComponent<Rigidbody2D>();
         moveSpeed = .05f;
 
         onGround = true;
         isJumping = false;
         jumpForce = 10;
-
-        jumpTimer = .35f;
+        jumpTime = .35f;
 
         nearSomething = false;
 
@@ -42,7 +39,8 @@ public class PlayerScript : MonoBehaviour
         interactText.gameObject.SetActive(false);
 
         healthSlider = GameObject.Find("healthSlider").GetComponent<Slider>();
-        healthSlider.value = 100; //to be updated later
+        healthSlider.value = stats.Health;
+
     }
 
     void Update()
@@ -61,7 +59,7 @@ public class PlayerScript : MonoBehaviour
             rigid.velocity = Vector2.up * (jumpForce / 2);
             onGround = false;
             isJumping = true;
-            jumpCounter = jumpTimer;
+            jumpCounter = jumpTime;
         }
         if (Input.GetKey(KeyCode.Space) && isJumping) //tap space to jump, hold space to jump higher
         {
@@ -85,7 +83,7 @@ public class PlayerScript : MonoBehaviour
             Interact(triggerObject); //near a door? Press E to enter. Near an NPC? Press E to talk
         }
 
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKey(KeyCode.B))
         {
             Shoot();
         }
@@ -135,7 +133,16 @@ public class PlayerScript : MonoBehaviour
 
     void Shoot()
     {
-
+        if (stats.Ammo > 0)
+        {
+            stats.Ammo -= 1;
+            Debug.Log("Pew pew pew! Ammo remaining: " + stats.Ammo);
+        }
+        else
+        {
+            stats.Ammo = 20;
+            Debug.Log("Out of ammo. Reloading!");
+        }
     }
 
     void TakeDamage()
@@ -163,5 +170,16 @@ public class PlayerScript : MonoBehaviour
                 Debug.Log("Dab");
                 break;
         }
+    }
+
+    void SetLevel()
+    {
+        //currentLevel[x,y]... X holds the levels, Y holds the stats for each level
+        //use playerprefs to store X, then call all Y values with that X when repawned
+
+        int[] currentStats = new int[6] { 100, 10, 20, 0, 0, 0 };
+        stats.Health = currentStats[0];
+        stats.Ammo = currentStats[2];
+        Debug.Log(stats.Ammo + " ammo and " + stats.Health + " health.");
     }
 }
