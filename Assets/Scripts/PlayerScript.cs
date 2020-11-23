@@ -20,6 +20,8 @@ public class PlayerScript : MonoBehaviour
 
     StatsScript stats;
 
+    Animator anim;
+
     void Start()
     {
         stats = GameObject.Find("playerStats").GetComponent<StatsScript>();
@@ -44,18 +46,24 @@ public class PlayerScript : MonoBehaviour
 
         speed = stats.MoveSpeed;
 
-
+        anim = gameObject.GetComponent<Animator>();
     }
 
     void Update()
     {
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
+            transform.localScale = new Vector2(-3, 3);
             Move(-speed);
         }
         else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
+            transform.localScale = new Vector2(3, 3);
             Move(speed);
+        }
+        else if (!Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.RightArrow))
+        {
+            anim.SetBool("Movement", false);
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && onGround) //cannot jump if not touching ground
@@ -63,6 +71,7 @@ public class PlayerScript : MonoBehaviour
             rigid.velocity = Vector2.up * (jumpForce / 2);
             onGround = false;
             isJumping = true;
+            anim.SetBool("Jumping", true);
             jumpCounter = jumpTime;
         }
         if (Input.GetKey(KeyCode.Space) && isJumping) //tap space to jump, hold space to jump higher
@@ -74,11 +83,15 @@ public class PlayerScript : MonoBehaviour
             }
             else
             {
+                anim.SetBool("Jumping", false);
+                anim.SetBool("Falling", true);
                 isJumping = false;
             }
         }
         if (Input.GetKeyUp(KeyCode.Space) && isJumping) //if space is released before jumpCounter reaches 0,
         {
+            anim.SetBool("Jumping", false);
+            anim.SetBool("Falling", true);
             isJumping = false;
         }
 
@@ -112,6 +125,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (col.gameObject.name.Contains("ground"))
         {
+            anim.SetBool("Falling", false);
             onGround = true;
         }
     }
@@ -148,6 +162,7 @@ public class PlayerScript : MonoBehaviour
     void Move(float direction)
     {
         transform.position = new Vector3(transform.position.x + direction, transform.position.y, transform.position.z);
+        anim.SetBool("Movement", true);
     }
 
     void Shoot()
