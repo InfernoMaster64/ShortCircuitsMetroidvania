@@ -17,16 +17,21 @@ public class PlayerScript : MonoBehaviour
 
     Text interactText;
     Slider healthSlider;
+    int currentHealth;
 
     StatsScript stats;
 
     void Start()
     {
-        stats = gameObject.GetComponent<StatsScript>();
-        SetLevel();
+        stats = GameObject.Find("playerStats").GetComponent<StatsScript>();
+
+        interactText = GameObject.Find("interactText").GetComponent<Text>();
+        healthSlider = GameObject.Find("healthSlider").GetComponent<Slider>();
+
+        UpdateStats(); //immediately set starting stats, or keep them updated for scene changes
 
         rigid = GetComponent<Rigidbody2D>();
-        moveSpeed = .05f;
+        moveSpeed = .1f;
 
         onGround = true;
         isJumping = false;
@@ -35,11 +40,9 @@ public class PlayerScript : MonoBehaviour
 
         nearSomething = false;
 
-        interactText = GameObject.Find("interactText").GetComponent<Text>();
         interactText.gameObject.SetActive(false);
 
-        healthSlider = GameObject.Find("healthSlider").GetComponent<Slider>();
-        healthSlider.value = stats.Health;
+        healthSlider.maxValue = stats.Health;
 
     }
 
@@ -86,6 +89,12 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKey(KeyCode.B))
         {
             Shoot();
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            Debug.Log("Become dead lol");
+            SceneManager.LoadScene("Castle");
         }
     }
 
@@ -140,8 +149,7 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            stats.Ammo = 20;
-            Debug.Log("Out of ammo. Reloading!");
+            Debug.Log("Out of ammo!");
         }
     }
 
@@ -172,14 +180,25 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    void SetLevel()
+    void UpdateStats()
     {
-        //currentLevel[x,y]... X holds the levels, Y holds the stats for each level
-        //use playerprefs to store X, then call all Y values with that X when repawned
+        if (stats.Level == 0) //if just starting the game
+        {
+            DontDestroyOnLoad(stats.gameObject);
+            stats.Level = 1;
+            stats.Health = 100;
+            stats.Damage = 10;
+            stats.Defense = 10;
 
-        int[] currentStats = new int[6] { 100, 10, 20, 0, 0, 0 };
-        stats.Health = currentStats[0];
-        stats.Ammo = currentStats[2];
-        Debug.Log(stats.Ammo + " ammo and " + stats.Health + " health.");
+            stats.Ammo = 20;
+            stats.expLvRequired = 200;
+
+
+        }
+        else
+        {
+            healthSlider.maxValue = stats.Health;
+        }
+
     }
 }
