@@ -117,11 +117,16 @@ public class StatsScript : MonoBehaviour
 
     public void GainExp(int exp)
     {
+        experience += exp;
 
         if (experience >= expLvRequired) //if player has 107 experience, and only needed 100, save the 7
         {
-            experience -= experience;
+            experience -= expLvRequired;
             LevelUp();
+        }
+        else
+        {
+            Debug.Log("Experience: " + experience + ", required for next level: " + expLvRequired);
         }
     }
 
@@ -137,6 +142,12 @@ public class StatsScript : MonoBehaviour
         {
             moveSpeed += .01f;
         }
+        Debug.Log("Level up! Level " + level);
+        Debug.Log("Health: " + health);
+        Debug.Log("Strength: " + strength);
+        Debug.Log("Durability: " + durability);
+        Debug.Log("Exp to next: " + expLvRequired);
+        Debug.Log("Remaining experience: " + experience);
     }
 
     public void AddGold(int goldAmount)

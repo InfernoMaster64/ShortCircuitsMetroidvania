@@ -17,7 +17,6 @@ public class PlayerScript : MonoBehaviour
 
     Text interactText;
     Slider healthSlider;
-    int currentHealth;
 
     StatsScript stats;
 
@@ -93,10 +92,19 @@ public class PlayerScript : MonoBehaviour
             Shoot();
         }
 
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D)) //temp code start
         {
             Debug.Log("Become dead lol");
             SceneManager.LoadScene("Castle");
+        }
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            stats.GainExp(55);
+        }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            stats.AddGold(10);
+            Debug.Log("Gold: " + stats.Gold); //temp code end
         }
     }
 
