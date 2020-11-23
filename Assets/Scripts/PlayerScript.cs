@@ -120,10 +120,11 @@ public class PlayerScript : MonoBehaviour
         {
             anim.SetBool("Shooting", false);
         }
-        if (Input.GetKey(KeyCode.Backspace)) //temp code start
+
+        if (Input.GetKeyDown(KeyCode.Backspace)) //temp code start
         {
-            Debug.Log("Become dead lol");
-            SceneManager.LoadScene("Castle");
+            TakeDamage();
+
         }
         if (Input.GetKeyDown(KeyCode.Return))
         {
@@ -196,7 +197,21 @@ public class PlayerScript : MonoBehaviour
 
     void TakeDamage()
     {
+        anim.SetBool("TakingDamage", true);
+        healthSlider.value -= 20;
+        speed = 0;
 
+        if (healthSlider.value == 0)
+        {
+            Invoke("TempResetPlayer", 1.5f); //TEMPORARY
+            InvokeRepeating("SpinDeath", 0, .1f);
+            rigid.isKinematic = true;
+        }
+        else
+        {
+            Invoke("StopTakingDamage", .20f);
+        }
+        
     }
 
     void Interact(string type) //near a door? Tell the player to press "E" to go through it
@@ -234,5 +249,25 @@ public class PlayerScript : MonoBehaviour
             //update UI with gold, current exp / exp needed, current health...
         }
         healthSlider.maxValue = stats.Health;
+    }
+
+    void StopTakingDamage()
+    {
+        anim.SetBool("TakingDamage", false);
+        speed = stats.MoveSpeed;
+    }
+
+    void TempResetPlayer()
+    {
+        StopTakingDamage();
+
+        Debug.Log("Become dead lol");
+        SceneManager.LoadScene("Castle");
+    }
+
+    void SpinDeath()
+    {
+        transform.Rotate(0, 0, 30);
+        transform.localScale = new Vector2(transform.localScale.x - .1f, transform.localScale.y - .1f);
     }
 }
