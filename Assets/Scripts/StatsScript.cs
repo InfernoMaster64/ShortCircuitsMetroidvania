@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class StatsScript : MonoBehaviour
 {
+    private static StatsScript instance;
+
     int health, damage, strength, defense, durability, ammo, gold, experience, level; //damage is total strength, defense is total durability
     public int expGain, expLvRequired;
 
@@ -13,15 +15,29 @@ public class StatsScript : MonoBehaviour
     bool[] hasBossKeys = new bool [3]; //three main areas
     bool[] hasKeys;
 
+    private void Awake()
+    {
+        if (instance == null) //prevents duplicate stat objects
+        {
+            instance = this;
+            DontDestroyOnLoad(this);
+        }
+        else
+        {
+            Object.Destroy(gameObject);
+        }
+
+        health = 100;
+        strength = 10;
+        durability = 10;
+        moveSpeed = .075f;
+    }
+
     public int Health
     {
         get
         {
             return health;
-        }
-        set
-        {
-            health = value;
         }
     }
 
@@ -32,10 +48,6 @@ public class StatsScript : MonoBehaviour
             damage = strength + currentUpgrade[0];
             return damage;
         }
-        set
-        {
-            strength = value;
-        }
     }
 
     public int Defense
@@ -44,10 +56,6 @@ public class StatsScript : MonoBehaviour
         {
             defense = durability + currentUpgrade[1];
             return defense;
-        }
-        set
-        {
-            durability = value;
         }
     }
 
@@ -69,10 +77,6 @@ public class StatsScript : MonoBehaviour
         {
             return moveSpeed;
         }
-        set
-        {
-            moveSpeed = value;
-        }
     }
 
     public int Gold
@@ -87,7 +91,7 @@ public class StatsScript : MonoBehaviour
         }
     }
 
-    public int Experience
+    public int EXP
     {
         get
         {
@@ -111,7 +115,7 @@ public class StatsScript : MonoBehaviour
         }
     }
 
-    void GainExp()
+    public void GainExp(int exp)
     {
 
         if (experience >= expLvRequired) //if player has 107 experience, and only needed 100, save the 7
@@ -135,7 +139,7 @@ public class StatsScript : MonoBehaviour
         }
     }
 
-    void AddGold(int goldAmount)
+    public void AddGold(int goldAmount)
     {
         gold += goldAmount;
     }

@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class PlayerScript : MonoBehaviour
 {
     Rigidbody2D rigid;
-    float moveSpeed;
+    float speed;
 
     bool onGround, isJumping;
     float jumpForce, jumpCounter, jumpTime; //power of jumping, current jump time, max jump time
@@ -31,7 +31,6 @@ public class PlayerScript : MonoBehaviour
         UpdateStats(); //immediately set starting stats, or keep them updated for scene changes
 
         rigid = GetComponent<Rigidbody2D>();
-        moveSpeed = .1f;
 
         onGround = true;
         isJumping = false;
@@ -44,17 +43,20 @@ public class PlayerScript : MonoBehaviour
 
         healthSlider.maxValue = stats.Health;
 
+        speed = stats.MoveSpeed;
+
+
     }
 
     void Update()
     {
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            Move(-moveSpeed);
+            Move(-speed);
         }
         else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            Move(moveSpeed);
+            Move(speed);
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && onGround) //cannot jump if not touching ground
@@ -184,21 +186,15 @@ public class PlayerScript : MonoBehaviour
     {
         if (stats.Level == 0) //if just starting the game
         {
-            DontDestroyOnLoad(stats.gameObject);
             stats.Level = 1;
-            stats.Health = 100;
-            stats.Damage = 10;
-            stats.Defense = 10;
 
             stats.Ammo = 20;
             stats.expLvRequired = 200;
-
-
         }
         else
         {
-            healthSlider.maxValue = stats.Health;
+            //update UI with gold, current exp / exp needed, current health...
         }
-
+        healthSlider.maxValue = stats.Health;
     }
 }
