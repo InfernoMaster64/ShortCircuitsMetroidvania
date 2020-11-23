@@ -31,6 +31,7 @@ public class StatsScript : MonoBehaviour
         strength = 10;
         durability = 10;
         moveSpeed = .075f;
+        ammo = 20;
     }
 
     public int Health

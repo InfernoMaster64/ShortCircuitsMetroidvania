@@ -51,7 +51,7 @@ public class PlayerScript : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) //moving
         {
             transform.localScale = new Vector2(-3, 3);
             Move(-speed);
@@ -61,9 +61,19 @@ public class PlayerScript : MonoBehaviour
             transform.localScale = new Vector2(3, 3);
             Move(speed);
         }
-        else if (!Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.RightArrow))
+        else if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.LeftArrow) //stop moving
+            && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.RightArrow))
         {
             anim.SetBool("Movement", false);
+        }
+
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) //crouching
+        {
+            anim.SetBool("Crouching", true);
+        }
+        else if (!Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.DownArrow)) //stop crouching
+        {
+            anim.SetBool("Crouching", false);
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && onGround) //cannot jump if not touching ground
@@ -71,6 +81,7 @@ public class PlayerScript : MonoBehaviour
             rigid.velocity = Vector2.up * (jumpForce / 2);
             onGround = false;
             isJumping = true;
+            anim.SetBool("Grounded", false);
             anim.SetBool("Jumping", true);
             jumpCounter = jumpTime;
         }
@@ -100,12 +111,16 @@ public class PlayerScript : MonoBehaviour
             Interact(triggerObject); //near a door? Press E to enter. Near an NPC? Press E to talk
         }
 
-        if (Input.GetKey(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.B)) //shooting
         {
+            anim.SetBool("Shooting", true);
             Shoot();
         }
-
-        if (Input.GetKey(KeyCode.D)) //temp code start
+        else if (!Input.GetKeyDown(KeyCode.B)) //not shooting
+        {
+            anim.SetBool("Shooting", false);
+        }
+        if (Input.GetKey(KeyCode.Backspace)) //temp code start
         {
             Debug.Log("Become dead lol");
             SceneManager.LoadScene("Castle");
@@ -126,6 +141,7 @@ public class PlayerScript : MonoBehaviour
         if (col.gameObject.name.Contains("ground"))
         {
             anim.SetBool("Falling", false);
+            anim.SetBool("Grounded", true);
             onGround = true;
         }
     }
@@ -211,7 +227,6 @@ public class PlayerScript : MonoBehaviour
         {
             stats.Level = 1;
 
-            stats.Ammo = 20;
             stats.expLvRequired = 200;
         }
         else
