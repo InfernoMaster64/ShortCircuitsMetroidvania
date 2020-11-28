@@ -99,7 +99,7 @@ public class PlayerScript : MonoBehaviour
                 isJumping = false;
             }
         }
-        if (Input.GetKeyUp(KeyCode.Space) && isJumping) //if space is released before jumpCounter reaches 0,
+        if (Input.GetKeyUp(KeyCode.Space) && isJumping) //if space is released before jumpCounter reaches 0
         {
             anim.SetBool("Jumping", false);
             anim.SetBool("Falling", true);
@@ -125,15 +125,6 @@ public class PlayerScript : MonoBehaviour
         {
             TakeDamage();
 
-        }
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            stats.GainExp(55);
-        }
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            stats.AddGold(10);
-            Debug.Log("Gold: " + stats.Gold); //temp code end
         }
     }
 
@@ -198,13 +189,13 @@ public class PlayerScript : MonoBehaviour
     void TakeDamage()
     {
         anim.SetBool("TakingDamage", true);
-        healthSlider.value -= 20;
+        healthSlider.value -= 20; //TEMPORARY
         speed = 0;
 
         if (healthSlider.value == 0)
         {
             Invoke("TempResetPlayer", 1.5f); //TEMPORARY
-            InvokeRepeating("SpinDeath", 0, .1f);
+            InvokeRepeating("DeathAnimation", 0, .1f);
             rigid.isKinematic = true;
         }
         else
@@ -265,7 +256,7 @@ public class PlayerScript : MonoBehaviour
         SceneManager.LoadScene("Castle");
     }
 
-    void SpinDeath()
+    void DeathAnimation()
     {
         transform.Rotate(0, 0, 30);
         transform.localScale = new Vector2(transform.localScale.x - .1f, transform.localScale.y - .1f);
