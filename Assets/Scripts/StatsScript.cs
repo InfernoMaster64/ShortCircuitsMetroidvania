@@ -30,7 +30,7 @@ public class StatsScript : MonoBehaviour
         health = 100;
         strength = 10;
         durability = 10;
-        moveSpeed = .075f;
+        moveSpeed = 6;
         ammo = 20;
     }
 
@@ -141,7 +141,7 @@ public class StatsScript : MonoBehaviour
 
         if (level%2 == 0)
         {
-            moveSpeed += .01f;
+            moveSpeed += .5f;
         }
         Debug.Log("Level up! Level " + level);
         Debug.Log("Health: " + health);
