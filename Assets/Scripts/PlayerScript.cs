@@ -169,7 +169,7 @@ public class PlayerScript : MonoBehaviour
 
     void Move(float direction)
     {
-        transform.position = new Vector3(transform.position.x + direction * Time.deltaTime, transform.position.y, transform.position.z);
+        transform.position = new Vector3(transform.position.x + direction, transform.position.y, transform.position.z);
         anim.SetBool("Movement", true);
     }
 
