@@ -14,11 +14,20 @@ public class CameraScript : MonoBehaviour
     {
         if (player.transform.position.x > transform.position.x + 1) //follow the player when player is near the edge of the screen
         {
-            transform.position = new Vector3(player.transform.position.x - 1, 0, -10);
+            transform.position = new Vector3(player.transform.position.x - 1, transform.position.y, -10);
         }
         else if (player.transform.position.x < transform.position.x - 1)
         {
-            transform.position = new Vector3(player.transform.position.x + 1, 0, -10);
+            transform.position = new Vector3(player.transform.position.x + 1, transform.position.y, -10);
+        }
+
+        if (player.transform.position.y > transform.position.y) //follow, but vertically
+        {
+            transform.position = new Vector3(transform.position.x, player.transform.position.y + .25f, -10);
+        }
+        else if (player.transform.position.y < transform.position.y - 3)
+        {
+            transform.position = new Vector3(transform.position.x, player.transform.position.y + 2.98f, -10);
         }
     }
 }
