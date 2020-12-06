@@ -9,6 +9,8 @@ TagManager:
   - Swamp
   - Crypt
   - Mansion
+  - Statue
+  - Save
   layers:
   - Default
   - TransparentFX
