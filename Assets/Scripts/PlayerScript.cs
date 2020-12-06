@@ -155,6 +155,8 @@ public class PlayerScript : MonoBehaviour
             Debug.Log("Interacting with: " + triggerObject);
         }
     }
+    //Note From William - I might want to edit some code here so the interactText is different for when you get to statues. I'll try this on a little later.
+    //Keep this in mind for the other puzzles as well.
 
     private void OnTriggerExit2D(Collider2D other)
     {
