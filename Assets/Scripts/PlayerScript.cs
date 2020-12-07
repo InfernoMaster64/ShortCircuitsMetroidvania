@@ -155,6 +155,11 @@ public class PlayerScript : MonoBehaviour
             interactText.text = "Press 'E' to activate";
             interactText.gameObject.SetActive(true); //Would you beleive me if I told you it took me 15 minutes to realize I forgot this line of code? - William
         }
+        else if (other.gameObject.tag == "Dummy") //This will check to see if the player is at one of the dummy statue - William
+        {
+            interactText.text = "Press 'E' to activate";
+            interactText.gameObject.SetActive(true); //Would you beleive me if I told you it took me 15 minutes to realize I forgot this line of code? - William
+        }
         else if (other.gameObject.tag == "Respawn") //This will check to see if the player is at one of the respawn statues - William
         {
             interactText.text = "Press 'E' to set spawn";
