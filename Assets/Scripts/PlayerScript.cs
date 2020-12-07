@@ -157,7 +157,7 @@ public class PlayerScript : MonoBehaviour
         }
         else if (other.gameObject.tag == "Respawn") //This will check to see if the player is at one of the respawn statues - William
         {
-            interactText.text = "Press 'E' to Set Spawn";
+            interactText.text = "Press 'E' to set spawn";
             interactText.gameObject.SetActive(true); //Would you beleive me if I told you it took me 15 minutes to realize I forgot this line of code? - William
         }
         else if (other.gameObject.tag == "MirrorPuzzle") //keep camera in fixed positions within the second puzzle room
@@ -172,6 +172,9 @@ public class PlayerScript : MonoBehaviour
         {
             triggerObject = other.gameObject.tag;
             nearSomething = true;
+
+            interactText.text = "Press 'E' to enter";
+            interactText.gameObject.SetActive(true);
 
             for (int x = 0; x < mirrors.Length; x++)
             {
@@ -222,6 +225,23 @@ public class PlayerScript : MonoBehaviour
         {
             camera.lockCamera = true;
             camera.lockPosition = new Vector3(other.gameObject.transform.position.x, other.gameObject.transform.position.y, -9);
+        }
+
+        if (other.gameObject.tag == "MirrorDoor")
+        {
+            triggerObject = other.gameObject.tag;
+            nearSomething = true;
+
+            interactText.text = "Press 'E' to enter";
+            interactText.gameObject.SetActive(true);
+            for (int x = 0; x < mirrors.Length; x++)
+            {
+                if (other.gameObject == mirrors[x])
+                {
+                    mirrorNum = x;
+                    break;
+                }
+            }
         }
     }
 
