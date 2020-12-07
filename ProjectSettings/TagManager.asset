@@ -11,6 +11,8 @@ TagManager:
   - Mansion
   - Statue
   - Save
+  - MirrorPuzzle
+  - MirrorDoor
   layers:
   - Default
   - TransparentFX

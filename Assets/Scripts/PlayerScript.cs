@@ -19,12 +19,18 @@ public class PlayerScript : MonoBehaviour
     Slider healthSlider;
 
     StatsScript stats;
+    CameraScript camera;
 
     Animator anim;
+
+    public GameObject[] mirrors;
+    public GameObject[] mirrorNewPositions;
+    int mirrorNum;
 
     void Start()
     {
         stats = GameObject.Find("playerStats").GetComponent<StatsScript>();
+        camera = GameObject.Find("Main Camera").GetComponent<CameraScript>();
 
         interactText = GameObject.Find("interactText").GetComponent<Text>();
         healthSlider = GameObject.Find("healthSlider").GetComponent<Slider>();
@@ -154,6 +160,28 @@ public class PlayerScript : MonoBehaviour
             interactText.text = "Press 'E' to Set Spawn";
             interactText.gameObject.SetActive(true); //Would you beleive me if I told you it took me 15 minutes to realize I forgot this line of code? - William
         }
+        else if (other.gameObject.tag == "MirrorPuzzle") //keep camera in fixed positions within the second puzzle room
+        {
+            Debug.Log("Now in puzzle room");
+            camera.lockPosition = new Vector3(other.gameObject.transform.position.x, other.gameObject.transform.position.y, -9);
+            camera.lockCamera = true;
+            Debug.Log("X = " + other.transform.position.x);
+            Debug.Log("Y = " + other.transform.position.y);
+        }
+        else if (other.gameObject.tag == "MirrorDoor")
+        {
+            triggerObject = other.gameObject.tag;
+            nearSomething = true;
+
+            for (int x = 0; x < mirrors.Length; x++)
+            {
+                if (other.gameObject == mirrors[x])
+                {
+                    mirrorNum = x;
+                    break;
+                }
+            }
+        }
         else
         {
             triggerObject = other.gameObject.tag;
@@ -176,7 +204,25 @@ public class PlayerScript : MonoBehaviour
             nearSomething = false;
             interactText.gameObject.SetActive(false);
         }
+        else
+        {
 
+        }
+
+        if (other.gameObject.tag == "MirrorPuzzle")
+        {
+            camera.lockCamera = false;
+        }
+
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "MirrorPuzzle")
+        {
+            camera.lockCamera = true;
+            camera.lockPosition = new Vector3(other.gameObject.transform.position.x, other.gameObject.transform.position.y, -9);
+        }
     }
 
     void Move(float direction)
@@ -236,6 +282,10 @@ public class PlayerScript : MonoBehaviour
             case "NPC": //temporary term
                 Debug.Log("Dab");
                 break;
+            case "MirrorDoor":
+                Debug.Log("Used the mirror!");
+                Teleport();
+                break;
         }
     }
 
@@ -272,5 +322,10 @@ public class PlayerScript : MonoBehaviour
     {
         transform.Rotate(0, 0, 30);
         transform.localScale = new Vector2(transform.localScale.x - .1f, transform.localScale.y - .1f);
+    }
+
+    public void Teleport()
+    {
+        transform.position = mirrorNewPositions[mirrorNum].transform.position;
     }
 }
