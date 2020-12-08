@@ -311,6 +311,9 @@ public class PlayerScript : MonoBehaviour
                 Debug.Log("Used the mirror!");
                 Teleport();
                 break;
+            case "Statue":
+                Debug.Log("Let's Activtion!");
+                break;
         }
     }
 
