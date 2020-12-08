@@ -14,6 +14,7 @@ TagManager:
   - MirrorPuzzle
   - MirrorDoor
   - Dummy
+  - Ground
   layers:
   - Default
   - TransparentFX
