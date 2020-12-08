@@ -9,8 +9,8 @@ public class EnemyController : MonoBehaviour
     public GameObject player;
     private SpriteRenderer rend;
     private Animator anim;
-    private BoxCollider2D leftAttack;
-    private BoxCollider2D rightAttack;
+    //private BoxCollider2D leftAttack;
+    //private BoxCollider2D rightAttack;
     public LayerMask layerMask;
 
     private int timesDead = 0;
@@ -47,6 +47,7 @@ public class EnemyController : MonoBehaviour
             {
                 waypoints[i] = GameObject.FindGameObjectWithTag("Waypoint_" + i);
             }
+
         }
         gameObject.AddComponent<BoxCollider2D>();
         
@@ -66,20 +67,44 @@ public class EnemyController : MonoBehaviour
     {
         if(!isDead) //all actions go in here
         {
-            if ((player.transform.position.x <= this.transform.position.x + enemyData.attackRange || player.transform.position.x >= this.transform.position.x - enemyData.attackRange) && player.transform.position.y >= this.transform.position.y - 1f && player.transform.position.y <= this.transform.position.y + 1f && !isFleeing && !isAttacking && canAttack && !isHit)
+            float distance = player.transform.position.x - this.transform.position.x;
+            
+            if (Mathf.Abs(distance) <= enemyData.attackRange/*(player.transform.position.x <= this.transform.position.x + enemyData.attackRange || player.transform.position.x >= this.transform.position.x - enemyData.attackRange)*/ && player.transform.position.y >= this.transform.position.y - 1.5f && player.transform.position.y <= this.transform.position.y + 1.5f && !isFleeing && !isAttacking && canAttack && !isHit)
             {
                 Attack();
             }
             if (enemyData.enemyName == "Archer") //only actions for the archer
             {
-                if ((player.transform.position.x <= this.transform.position.x + 2f || player.transform.position.x >= this.transform.position.x - 2f) && player.transform.position.y >= this.transform.position.y - 1f && player.transform.position.y <= this.transform.position.y + 1f && !isAttacking && !isHit)
+
+                if(player.transform.position.x < this.transform.position.x)
+                {
+                    rend.flipX = true;
+                }
+                else
+                {
+                    rend.flipX = false;
+                }
+
+
+                float fleeDistance;
+                if(!rend.flipX)
+                {
+                    fleeDistance = player.transform.position.x - this.transform.position.x;
+                }
+                else
+                {
+                    fleeDistance = player.transform.position.x + this.transform.position.x;
+                }
+                if (Mathf.Abs(fleeDistance) <= 2f/*(player.transform.position.x <= this.transform.position.x + 2f || player.transform.position.x >= this.transform.position.x - 2f)*/ && player.transform.position.y >= this.transform.position.y - 1f && player.transform.position.y <= this.transform.position.y + 1f && !isAttacking && !isHit)
                 {
                     isFleeing = true;
+                    anim.SetBool("IsFleeing", true);
                     ArcherFlee();
                 }
-                if ((player.transform.position.x >= this.transform.position.x + 2f || player.transform.position.x <= this.transform.position.x - 2f) && player.transform.position.y >= 1f && player.transform.position.y <= 1f)
+                if (Mathf.Abs(fleeDistance) > 2f/*(player.transform.position.x >= this.transform.position.x + 2f || player.transform.position.x <= this.transform.position.x - 2f)*//* && player.transform.position.y >= 1f && player.transform.position.y <= 1f*/ && player.transform.position.y >= this.transform.position.y - 1f && player.transform.position.y <= this.transform.position.y + 1f && !isAttacking && !isHit)
                 {
                     isFleeing = false;
+                    anim.SetBool("IsFleeing", false);
                 }
             }
             if(enemyData.enemyName != "Archer" && enemyData.enemyName != "Boss" && !isAttacking && !isHit)
@@ -117,39 +142,48 @@ public class EnemyController : MonoBehaviour
 
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == "bullet")
+        {
+            TakeDamage(10);
+        }
+    }
+
+
     private void Move()
     {
         bool canWalk = CheckGroundBeneath();
         if(canWalk)
         {
-            if(rend.flipX)
+            if(!rend.flipX)
             {
                 //move right
                 //play animation
-                this.transform.Translate(new Vector3(-enemyData.speed, 0, 0));
+                this.transform.Translate(new Vector3(enemyData.speed, 0, 0));
             }
             else
             {
                 //move left
                 //play animation
-                this.transform.Translate(new Vector3(enemyData.speed, 0, 0));
+                this.transform.Translate(new Vector3(-enemyData.speed, 0, 0));
             }
         }
         else
         {
-            if (rend.flipX)
+            if (!rend.flipX)
             {
-                rend.flipX = false;
+                rend.flipX = true;
                 //move in left
                 //play animation
-                this.transform.Translate(new Vector3(enemyData.speed, 0, 0));
+                this.transform.Translate(new Vector3(-enemyData.speed, 0, 0));
             }
             else
             {
-                rend.flipX = true;
+                rend.flipX = false;
                 //move in right
                 //play animation
-                this.transform.Translate(new Vector3(-enemyData.speed, 0, 0));
+                this.transform.Translate(new Vector3(enemyData.speed, 0, 0));
             }
             
         }
@@ -159,10 +193,10 @@ public class EnemyController : MonoBehaviour
     bool CheckGroundBeneath()
     {
         bool isGround;
-        if(rend.flipX == true)
+        if(!rend.flipX)
         {
             
-            if(Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), Vector2.down, .1f, layerMask))
+            if(Physics2D.Raycast(new Vector2(this.transform.position.x + .1f, this.transform.position.y), Vector2.down, .1f, layerMask))
             {
                 isGround = true;
             }
@@ -172,9 +206,9 @@ public class EnemyController : MonoBehaviour
             }
             return isGround;
         }
-        else if(rend.flipX == false)
+        else if(rend.flipX)
         {
-            if (Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), Vector2.down, .1f, layerMask))
+            if (Physics2D.Raycast(new Vector2(this.transform.position.x - .1f, this.transform.position.y), Vector2.down, .1f, layerMask))
             {
                 isGround = true;
             }
@@ -190,24 +224,34 @@ public class EnemyController : MonoBehaviour
 
     void ArcherFlee()
     {
-        if (player.transform.position.x <= this.transform.position.x + 2f && player.transform.position.x != this.transform.position.x)
+        float playerDistance;
+        if(!rend.flipX)
         {
-            bool canWalk = CheckGroundBeneath();
-            rend.flipX = true;
-            if (canWalk)
-            {
-                //move away to the right
-                this.transform.Translate(new Vector3(-enemyData.speed, 0, 0));
-            }
+            playerDistance = player.transform.position.x - this.transform.position.x;
         }
-        if (player.transform.position.x >= this.transform.position.x - 2f && player.transform.position.x != this.transform.position.x)
+        else
+        {
+            playerDistance = player.transform.position.x + this.transform.position.x;
+        }
+        if (Mathf.Abs(playerDistance) <= 2f && rend.flipX)
         {
             bool canWalk = CheckGroundBeneath();
             rend.flipX = false;
             if (canWalk)
             {
-                //move away to the left
+                //move away to the right
                 this.transform.Translate(new Vector3(enemyData.speed, 0, 0));
+            }
+        }
+
+        if (Mathf.Abs(playerDistance) <= 2f && !rend.flipX)
+        {
+            bool canWalk = CheckGroundBeneath();
+            rend.flipX = true;
+            if (canWalk)
+            {
+                //move away to the left
+                this.transform.Translate(new Vector3(-enemyData.speed, 0, 0));
             }
 
         }
@@ -258,12 +302,28 @@ public class EnemyController : MonoBehaviour
         canAttack = false;
         //play animation
         //if player gets hit with the trigger created, then deal damage
-        if(enemyData.enemyName == "Archer")
+        if(enemyData.enemyName == "Archer" && enemyData.enemyName != "Boss")
         {
-            //do the archer attack
-            //instantiate the arrow to shoot
-            StartCoroutine(AttackDuration());
-            StartCoroutine(AttackCooldown());
+            if(rend.flipX)
+            {
+                //do the archer attack
+                anim.SetTrigger("IsAttacking1");
+                //instantiate the arrow to shoot
+                //going to do a raycast forwards for right now
+                StartCoroutine(ArcherAttack());
+                StartCoroutine(AttackDuration());
+                StartCoroutine(AttackCooldown());
+            }
+            else
+            {
+                //do the archer attack
+                anim.SetTrigger("IsAttacking1");
+                //instantiate the arrow to shoot
+                //going to do a raycast forwards for right now
+                StartCoroutine(ArcherAttack());
+                StartCoroutine(AttackDuration());
+                StartCoroutine(AttackCooldown());
+            }
         }
         else if(enemyData.enemyName != "Archer" && enemyData.enemyName != "Boss")
         {
@@ -355,11 +415,12 @@ public class EnemyController : MonoBehaviour
 
     public void HitBox()
     {
-        if(rend.flipX)
+        if(!rend.flipX)
         {
             //rightAttack.enabled = true;
             Debug.Log("Attack Right");
-            RaycastHit2D hit = Physics2D.BoxCast(new Vector2(this.transform.position.x - 1f, this.transform.position.y), new Vector2(1, 1), 0f, Vector2.right, 9);
+            RaycastHit2D hit = Physics2D.BoxCast(new Vector2(this.transform.position.x, this.transform.position.y), new Vector2(3, 1), 0f, Vector2.right, 1);
+            Debug.DrawRay(this.transform.position, Vector2.right, Color.red, 1);
             if(hit.transform.gameObject.tag == "Player")
             {
                 //player.GetComponent<PlayerScript>().TakeDamage(enemyData.damage);
@@ -370,7 +431,8 @@ public class EnemyController : MonoBehaviour
         {
             //leftAttack.enabled = true;
             Debug.Log("Attack Left");
-            RaycastHit2D hit = Physics2D.BoxCast(new Vector2(this.transform.position.x + 1f, this.transform.position.y), new Vector2(1, 1), 0f, Vector2.left, 9);
+            RaycastHit2D hit = Physics2D.BoxCast(new Vector2(this.transform.position.x - 1f, this.transform.position.y), new Vector2(3, 1), 0f, Vector2.left, 1);
+            Debug.DrawRay(this.transform.position, Vector2.left, Color.red, 1);
             if (hit.transform.gameObject.tag == "Player")
             {
                 //player.GetComponent<PlayerScript>().TakeDamage(enemyData.damage);
@@ -389,8 +451,8 @@ public class EnemyController : MonoBehaviour
         anim.SetBool("IsDead", true);
         yield return new WaitForSeconds(5);
         //play the revive animaiton
-        anim.SetBool("IsDead", false);
         anim.SetTrigger("revive");
+        anim.SetBool("IsDead", false);
         timesDead += 1;
         isDead = false;
         anim.ResetTrigger("revive");
@@ -412,6 +474,30 @@ public class EnemyController : MonoBehaviour
 
     }
 
+    IEnumerator ArcherAttack()
+    {
+        yield return new WaitForSeconds(.2f);
+        if(!rend.flipX)
+        {
+            RaycastHit2D hit = Physics2D.Raycast(this.transform.position, Vector2.right, 10f);
+            Debug.DrawRay(this.transform.position, Vector2.right);
+            if(hit.transform.tag == "Player")
+            {
+                player.GetComponent<PlayerScript>().TakeDamage(enemyData.damage);
+            }
+        }
+        else
+        {
+            RaycastHit2D hit = Physics2D.Raycast(this.transform.position, Vector2.left, 10f);
+            Debug.DrawRay(this.transform.position, Vector2.left);
+            if (hit.transform.tag == "Player")
+            {
+                player.GetComponent<PlayerScript>().TakeDamage(enemyData.damage);
+            }
+        }
+        
+    }
+
     IEnumerator HitBoxTrigger()
     {
         yield return new WaitForSeconds(.2f);
@@ -423,7 +509,11 @@ public class EnemyController : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         isAttacking = false;
         anim.ResetTrigger("IsAttacking1");
-        anim.ResetTrigger("IsAttacking2");
+        if(enemyData.enemyName != "Archer")
+        {
+            anim.ResetTrigger("IsAttacking2");
+        }
+        
         //leftAttack.enabled = false;
         //rightAttack.enabled = false;
     }

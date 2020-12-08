@@ -7,7 +7,8 @@ public class EnemySpawner : MonoBehaviour
     public LevelEnemiesData castleEnemies;
     public EnemyData skeleton;
     public EnemyData archer;
-
+    public EnemyData knight;
+    public EnemyData boss;
 
 
     // Start is called before the first frame update
@@ -29,6 +30,14 @@ public class EnemySpawner : MonoBehaviour
             else if (castleEnemies.enemyTypes[i] == LevelEnemiesData.EnemyType.archer)
             {
                 enemyController.enemyData = archer;
+            }
+            else if(castleEnemies.enemyTypes[i] == LevelEnemiesData.EnemyType.knight)
+            {
+                enemyController.enemyData = knight;
+            }
+            else if (castleEnemies.enemyTypes[i] == LevelEnemiesData.EnemyType.boss)
+            {
+                enemyController.enemyData = boss;
             }
             else
             {

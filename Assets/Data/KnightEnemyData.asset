@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e29a1d26fe71c5a4aa3e3a5c4d7c3b37, type: 3}
-  m_Name: ArcherEnemyData
+  m_Name: KnightEnemyData
   m_EditorClassIdentifier: 
-  enemyName: Archer
-  enemySprite: {fileID: 21300000, guid: 51d4c1724c0e08c4bab5f970e4076ea5, type: 3}
-  maxHealth: 20
-  attackCooldown: 2
-  attackRange: 10
-  speed: 3
+  enemyName: Knight
+  enemySprite: {fileID: 21300000, guid: 5c3848a81bafa43429f262c6010f0d3b, type: 3}
+  maxHealth: 30
+  attackCooldown: 3
+  attackRange: 2
+  speed: 2
   damage: 10
-  animControl: {fileID: 9100000, guid: 0d6f45fa138e39e4a8f8d71426d43295, type: 2}
+  animControl: {fileID: 9100000, guid: 336150eece178444281ad14a1753db3a, type: 2}
