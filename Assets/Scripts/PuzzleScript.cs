@@ -42,7 +42,7 @@ public class PuzzleScript : MonoBehaviour
         Debug.Log("Puzzles?");
         if (f1puzzle == true && f2Lever == true && f3Lever == true)
         {
-
+            //Insert the barrir for the Boss Room being disabled here.
         }
     }
 }
