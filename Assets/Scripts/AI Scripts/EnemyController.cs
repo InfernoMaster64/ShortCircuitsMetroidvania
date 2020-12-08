@@ -9,6 +9,9 @@ public class EnemyController : MonoBehaviour
     public GameObject player;
     private SpriteRenderer rend;
     private Animator anim;
+    private BoxCollider2D leftAttack;
+    private BoxCollider2D rightAttack;
+    public LayerMask layerMask;
 
     private int timesDead = 0;
 
@@ -31,9 +34,11 @@ public class EnemyController : MonoBehaviour
     {
         currentHealth = enemyData.maxHealth;
         Debug.Log("Enemy" + enemyData.enemyName + " spawned.");
+        layerMask = LayerMask.NameToLayer("Ground");
         rend = gameObject.AddComponent<SpriteRenderer>();
         anim = gameObject.AddComponent<Animator>();
         //set the animator based on the enemyName
+        anim.runtimeAnimatorController = enemyData.animControl;
         rend.sprite = enemyData.enemySprite;
         player = GameObject.FindGameObjectWithTag("Player");
         if(enemyData.enemyName == "Boss")
@@ -43,6 +48,18 @@ public class EnemyController : MonoBehaviour
                 waypoints[i] = GameObject.FindGameObjectWithTag("Waypoint_" + i);
             }
         }
+        gameObject.AddComponent<BoxCollider2D>();
+        
+
+        /*leftAttack = gameObject.AddComponent<BoxCollider2D>();
+        leftAttack.offset = new Vector2(1f, 0f);
+        leftAttack.isTrigger = true;
+        leftAttack.enabled = false;
+
+        rightAttack = gameObject.AddComponent<BoxCollider2D>();
+        rightAttack.offset = new Vector2(-1f, 0f);
+        rightAttack.isTrigger = true;
+        rightAttack.enabled = false;*/
     }
 
     private void Update()
@@ -82,6 +99,21 @@ public class EnemyController : MonoBehaviour
                 isActive = true;
             }
         }
+
+
+
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            Attack();
+        }
+        if(Input.GetKeyDown(KeyCode.O))
+        {
+            TakeDamage(10);
+        }
+
+
+
+
 
     }
 
@@ -129,7 +161,8 @@ public class EnemyController : MonoBehaviour
         bool isGround;
         if(rend.flipX == true)
         {
-            if(Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), Vector2.down, .1f))
+            
+            if(Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), Vector2.down, .1f, layerMask))
             {
                 isGround = true;
             }
@@ -141,7 +174,7 @@ public class EnemyController : MonoBehaviour
         }
         else if(rend.flipX == false)
         {
-            if (Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), Vector2.down, .1f))
+            if (Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), Vector2.down, .1f, layerMask))
             {
                 isGround = true;
             }
@@ -186,6 +219,7 @@ public class EnemyController : MonoBehaviour
         {
             isHit = true;
             //play 'hit' animation
+            anim.SetTrigger("IsHit");
             currentHealth -= damage;
             if (currentHealth <= 0 && enemyData.enemyName != "Boss")
             {
@@ -239,20 +273,47 @@ public class EnemyController : MonoBehaviour
                 if(rend.flipX)
                 {
                     //do attack 1 animation
+                    anim.SetTrigger("IsAttacking1");
                     //animation should create a trigger prefab
                     //all of this to the right
+                    StartCoroutine(HitBoxTrigger());
                     StartCoroutine(AttackDuration());
                     StartCoroutine(AttackCooldown());
                 }
                 else
                 {
                     //do attack 1 animation
+                    anim.SetTrigger("IsAttacking1");
                     //animation should create a trigger prefab
                     //all of this to the left
+                    StartCoroutine(HitBoxTrigger());
                     StartCoroutine(AttackDuration());
                     StartCoroutine(AttackCooldown());
                 }
 
+            }
+            else if(random == 1)
+            {
+                if (rend.flipX)
+                {
+                    //do attack 2 animation
+                    anim.SetTrigger("IsAttacking2");
+                    //animation should create a trigger prefab
+                    //all of this to the right
+                    StartCoroutine(HitBoxTrigger());
+                    StartCoroutine(AttackDuration());
+                    StartCoroutine(AttackCooldown());
+                }
+                else
+                {
+                    //do attack 2 animation
+                    anim.SetTrigger("IsAttacking2");
+                    //animation should create a trigger prefab
+                    //all of this to the left
+                    StartCoroutine(HitBoxTrigger());
+                    StartCoroutine(AttackDuration());
+                    StartCoroutine(AttackCooldown());
+                }
             }
         }
         else if(enemyData.enemyName == "Boss")
@@ -292,7 +353,31 @@ public class EnemyController : MonoBehaviour
     }
 
 
-
+    public void HitBox()
+    {
+        if(rend.flipX)
+        {
+            //rightAttack.enabled = true;
+            Debug.Log("Attack Right");
+            RaycastHit2D hit = Physics2D.BoxCast(new Vector2(this.transform.position.x - 1f, this.transform.position.y), new Vector2(1, 1), 0f, Vector2.right, 9);
+            if(hit.transform.gameObject.tag == "Player")
+            {
+                //player.GetComponent<PlayerScript>().TakeDamage(enemyData.damage);
+                Debug.Log("Hit Player");
+            }
+        }
+        else
+        {
+            //leftAttack.enabled = true;
+            Debug.Log("Attack Left");
+            RaycastHit2D hit = Physics2D.BoxCast(new Vector2(this.transform.position.x + 1f, this.transform.position.y), new Vector2(1, 1), 0f, Vector2.left, 9);
+            if (hit.transform.gameObject.tag == "Player")
+            {
+                //player.GetComponent<PlayerScript>().TakeDamage(enemyData.damage);
+                Debug.Log("Hit Player");
+            }
+        }
+    }
 
 
 
@@ -301,15 +386,21 @@ public class EnemyController : MonoBehaviour
     IEnumerator SkeletonRevive()
     {
         //play the death animation for skeleton
+        anim.SetBool("IsDead", true);
         yield return new WaitForSeconds(5);
         //play the revive animaiton
+        anim.SetBool("IsDead", false);
+        anim.SetTrigger("revive");
         timesDead += 1;
         isDead = false;
+        anim.ResetTrigger("revive");
+        
     }
 
     IEnumerator DeathTimer()
     {
         //play death animation
+        anim.SetBool("IsDead", true);
         yield return new WaitForSeconds(5);
         Destroy(this);
     }
@@ -321,16 +412,27 @@ public class EnemyController : MonoBehaviour
 
     }
 
+    IEnumerator HitBoxTrigger()
+    {
+        yield return new WaitForSeconds(.2f);
+        HitBox();
+    }
+
     IEnumerator AttackDuration()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(.5f);
         isAttacking = false;
+        anim.ResetTrigger("IsAttacking1");
+        anim.ResetTrigger("IsAttacking2");
+        //leftAttack.enabled = false;
+        //rightAttack.enabled = false;
     }
 
     IEnumerator HitDuration()
     {
         yield return new WaitForSeconds(1);
         isHit = false;
+        anim.ResetTrigger("IsHit");
     }
 
     #endregion

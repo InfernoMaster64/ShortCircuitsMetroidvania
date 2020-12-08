@@ -129,7 +129,7 @@ public class PlayerScript : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Backspace)) //temp code start
         {
-            TakeDamage();
+            TakeDamage(20);
 
         }
     }
@@ -148,7 +148,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (other.gameObject.tag == "Damage") //This is purely a bool for weapon damage. TakeDamage() checks the type and modifies health 
         {
-            TakeDamage();
+            //TakeDamage();
         }
         else if (other.gameObject.tag == "Statue") //This will check to see if the player is at one of the first floor statue - William
         {
@@ -269,10 +269,10 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    void TakeDamage()
+    public void TakeDamage(int damage)
     {
         anim.SetBool("TakingDamage", true);
-        healthSlider.value -= 20; //TEMPORARY
+        healthSlider.value -= damage; //TEMPORARY
         speed = 0;
 
         if (healthSlider.value == 0)

@@ -12,5 +12,6 @@ public class EnemyData : ScriptableObject
     public float attackRange;
     public float speed;
     public int damage;
-
+    public RuntimeAnimatorController animControl;
+    
 }

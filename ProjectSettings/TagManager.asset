@@ -15,6 +15,7 @@ TagManager:
   - MirrorDoor
   - Dummy
   - Ground
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -24,8 +25,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - Ground
+  - Player
   - 
   - 
   - 
