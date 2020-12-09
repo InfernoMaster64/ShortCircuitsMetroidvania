@@ -6,7 +6,7 @@ public class EnemyController : MonoBehaviour
 {
     public EnemyData enemyData;
     private int currentHealth;
-    public GameObject player;
+    public GameObject player, winPanel;
     private SpriteRenderer rend;
     private Animator anim;
     //private BoxCollider2D leftAttack;
@@ -642,9 +642,16 @@ public class EnemyController : MonoBehaviour
     {
         Instantiate(enemyData.ExplosionHandler3, new Vector2(this.transform.position.x + .7f, this.transform.position.y + .7f), Quaternion.Euler(0, 0, 0));
         yield return new WaitForSeconds(11f);
-        
 
-        //call the new scene
+        //Opens WinPanel then later going to the Main Menu Scene - William
+        StartCoroutine(Winner());
+    }
+    IEnumerator Winner()
+    {
+        winPanel.gameObject.SetActive(true);
+        yield return new WaitForSeconds(11f);
+
+
     }
 
     #endregion

@@ -31,7 +31,7 @@ public class PlayerScript : MonoBehaviour
 
     Vector2 respawnPos;
 
-    public PuzzleScript statue; //This will allow me to call to the Puzzle Code for literlly one line of this script.
+    public GameObject PuzzleController; //This will allow me to call to the Puzzle Code for literlly one line of this script.
 
     public GameObject bulletPrefab;
     void Start()
@@ -165,6 +165,22 @@ public class PlayerScript : MonoBehaviour
         {
             interactText.text = "Press 'E' to activate";
             interactText.gameObject.SetActive(true); //Would you beleive me if I told you it took me 15 minutes to realize I forgot this line of code? - William
+            triggerObject = other.gameObject.tag;
+            nearSomething = true;
+        }
+        else if (other.gameObject.tag == "Statue_Two") //This will check to see if the player is at one of the first floor statue - William
+        {
+            interactText.text = "Press 'E' to activate";
+            interactText.gameObject.SetActive(true); //Would you beleive me if I told you it took me 15 minutes to realize I forgot this line of code? - William
+            triggerObject = other.gameObject.tag;
+            nearSomething = true;
+        }
+        else if (other.gameObject.tag == "Statue_Three") //This will check to see if the player is at one of the first floor statue - William
+        {
+            interactText.text = "Press 'E' to activate";
+            interactText.gameObject.SetActive(true); //Would you beleive me if I told you it took me 15 minutes to realize I forgot this line of code? - William
+            triggerObject = other.gameObject.tag;
+            nearSomething = true;
         }
         else if (other.gameObject.tag == "Dummy") //This will check to see if the player is at one of the dummy statue - William
         {
@@ -320,6 +336,7 @@ public class PlayerScript : MonoBehaviour
 
     void Interact(string type) //near a door? Tell the player to press "E" to go through it
     {
+        Debug.Log("Interact");
         switch (type)
         {
             case "Castle":
@@ -335,7 +352,15 @@ public class PlayerScript : MonoBehaviour
                 //Will - Need this for the Statues to be activated.
             case "Statue":
                 Debug.Log("Let's Activtion!");
-                statue.Activation();
+                PuzzleController.GetComponent<PuzzleScript>().Activation();
+                break;
+            case "Statue_Two":
+                Debug.Log("Let's Activtion Two!");
+                PuzzleController.GetComponent<PuzzleScript>().ActivationTwo();
+                break;
+            case "Statue_Three":
+                Debug.Log("Let's Activtion Tri!");
+                PuzzleController.GetComponent<PuzzleScript>().ActivationThree();
                 break;
             case "Respawn":
                 Debug.Log("So... How was the dying?");

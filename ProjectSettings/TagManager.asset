@@ -22,6 +22,8 @@ TagManager:
   - Waypoint_1
   - Waypoint_2
   - FlameballSpawn
+  - Statue_Two
+  - Statue_Three
   layers:
   - Default
   - TransparentFX
