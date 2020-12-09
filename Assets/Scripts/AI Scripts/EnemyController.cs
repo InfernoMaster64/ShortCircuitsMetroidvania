@@ -34,13 +34,14 @@ public class EnemyController : MonoBehaviour
     {
         currentHealth = enemyData.maxHealth;
         Debug.Log("Enemy" + enemyData.enemyName + " spawned.");
-        layerMask = LayerMask.NameToLayer("Ground");
+        layerMask = LayerMask.NameToLayer("Player");
         rend = gameObject.AddComponent<SpriteRenderer>();
         anim = gameObject.AddComponent<Animator>();
         //set the animator based on the enemyName
         anim.runtimeAnimatorController = enemyData.animControl;
         rend.sprite = enemyData.enemySprite;
         player = GameObject.FindGameObjectWithTag("Player");
+        this.gameObject.layer = 10;
         if(enemyData.enemyName == "Boss")
         {
             for(int i = 0; i < waypoints.Length; i++ )
@@ -49,9 +50,13 @@ public class EnemyController : MonoBehaviour
             }
 
         }
-        gameObject.AddComponent<BoxCollider2D>();
-        
-
+        BoxCollider2D collide = gameObject.AddComponent<BoxCollider2D>();
+        collide.size = new Vector2(1, 2);
+        if(enemyData.enemyName == "Archer")
+        {
+            collide.offset = new Vector2(0.31f, -0.65f);
+        }
+        rend.sortingOrder = 3;
         /*leftAttack = gameObject.AddComponent<BoxCollider2D>();
         leftAttack.offset = new Vector2(1f, 0f);
         leftAttack.isTrigger = true;
@@ -97,14 +102,14 @@ public class EnemyController : MonoBehaviour
                 }
                 if (Mathf.Abs(fleeDistance) <= 2f/*(player.transform.position.x <= this.transform.position.x + 2f || player.transform.position.x >= this.transform.position.x - 2f)*/ && player.transform.position.y >= this.transform.position.y - 1f && player.transform.position.y <= this.transform.position.y + 1f && !isAttacking && !isHit)
                 {
-                    isFleeing = true;
+                    /*isFleeing = true;
                     anim.SetBool("IsFleeing", true);
-                    ArcherFlee();
+                    ArcherFlee();*/
                 }
                 if (Mathf.Abs(fleeDistance) > 2f/*(player.transform.position.x >= this.transform.position.x + 2f || player.transform.position.x <= this.transform.position.x - 2f)*//* && player.transform.position.y >= 1f && player.transform.position.y <= 1f*/ && player.transform.position.y >= this.transform.position.y - 1f && player.transform.position.y <= this.transform.position.y + 1f && !isAttacking && !isHit)
                 {
-                    isFleeing = false;
-                    anim.SetBool("IsFleeing", false);
+                    /*isFleeing = false;
+                    anim.SetBool("IsFleeing", false);*/
                 }
             }
             if(enemyData.enemyName != "Archer" && enemyData.enemyName != "Boss" && !isAttacking && !isHit)
@@ -320,8 +325,11 @@ public class EnemyController : MonoBehaviour
                 anim.SetTrigger("IsAttacking1");
                 //instantiate the arrow to shoot
                 //going to do a raycast forwards for right now
+                Debug.Log("Before Archer Attack");
                 StartCoroutine(ArcherAttack());
+                Debug.Log("Before Attack duration");
                 StartCoroutine(AttackDuration());
+                Debug.Log("Before Attack cooldown");
                 StartCoroutine(AttackCooldown());
             }
         }
@@ -479,21 +487,33 @@ public class EnemyController : MonoBehaviour
         yield return new WaitForSeconds(.2f);
         if(!rend.flipX)
         {
-            RaycastHit2D hit = Physics2D.Raycast(this.transform.position, Vector2.right, 10f);
-            Debug.DrawRay(this.transform.position, Vector2.right);
-            if(hit.transform.tag == "Player")
+            Instantiate(enemyData.arrowPrefab, new Vector2(this.transform.position.x + 1f, this.transform.position.y - .5f), Quaternion.Euler(0, 0, 0));
+
+            
+            /*Debug.Log("Before Raycast right");
+            RaycastHit2D hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y - .2f), Vector2.right, 10f);
+            Debug.Log(hit.transform.gameObject.tag);
+            Debug.DrawRay(this.transform.position, Vector2.right, Color.red, 1);
+            Debug.Log("After Raycast right");
+            if (hit.transform.tag == "Player")
             {
+                Debug.Log("Hit Player");
                 player.GetComponent<PlayerScript>().TakeDamage(enemyData.damage);
-            }
+            }*/
         }
         else
         {
-            RaycastHit2D hit = Physics2D.Raycast(this.transform.position, Vector2.left, 10f);
-            Debug.DrawRay(this.transform.position, Vector2.left);
+            Instantiate(enemyData.arrowPrefab, new Vector2(this.transform.position.x - 1f, this.transform.position.y - .5f), Quaternion.Euler(1, 0, 0));
+            /*Debug.Log("Before Raycast left");
+            RaycastHit2D hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y - .2f), Vector2.left, 10f);
+            Debug.Log(hit.transform.gameObject.tag);
+            Debug.DrawRay(this.transform.position, Vector2.left, Color.red, 1);
+            Debug.Log("After Raycast left");
             if (hit.transform.tag == "Player")
             {
+                Debug.Log("Hit Player");
                 player.GetComponent<PlayerScript>().TakeDamage(enemyData.damage);
-            }
+            }*/
         }
         
     }
