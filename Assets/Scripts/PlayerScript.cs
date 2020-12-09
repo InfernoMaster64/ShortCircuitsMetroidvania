@@ -34,6 +34,7 @@ public class PlayerScript : MonoBehaviour
     public GameObject PuzzleController; //This will allow me to call to the Puzzle Code for literlly one line of this script.
 
     public GameObject bulletPrefab;
+
     void Start()
     {
         stats = GameObject.Find("playerStats").GetComponent<StatsScript>();
@@ -64,7 +65,7 @@ public class PlayerScript : MonoBehaviour
 
         transform.position = stats.respawn;
 
-        PuzzleController.GetComponent<PuzzleScript>().CheckStatue();
+
     }
 
     void Update()

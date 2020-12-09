@@ -10,21 +10,7 @@ public class PuzzleScript : MonoBehaviour
     public bool f1puzzle = false;
     public GameObject Statue1, Statue2, Statue3;
     public Sprite active;
-    public GameObject barrier;
-
-
-    private void Awake()
-    {
-        if (instance == null) //prevents duplicate stat objects
-        {
-            instance = this;
-            DontDestroyOnLoad(this);
-        }
-        else
-        {
-            Object.Destroy(gameObject);
-        }
-    }
+    GameObject barrier;
 
     //will be called from the player script once E is pressed on a real statue.
     public void Activation()
@@ -53,12 +39,28 @@ public class PuzzleScript : MonoBehaviour
 
     public void CheckStatue()
     {
-        barrier = GameObject.FindGameObjectWithTag("Barrier");
         Debug.Log("Are they activated?");
         if (Statue1.GetComponent<SpriteRenderer>().sprite == active && Statue2.GetComponent<SpriteRenderer>().sprite == active && Statue3.GetComponent<SpriteRenderer>().sprite == active)
         {
             f1puzzle = true;
+            Barrier(false);
+        }
+    }
+
+    public void Barrier(bool repawnThree)
+    {
+        Debug.Log("Path OPEN");
+        barrier = GameObject.FindGameObjectWithTag("Barrier");
+        Debug.Log("Barrier found");
+        if (f1puzzle == true)
+        {
+            Debug.Log("Bye Bye");
             barrier.gameObject.SetActive(false);
+            Debug.Log("To the Boss");
+        }
+        else
+        {
+            Debug.Log("Try Again Will");
         }
     }
 

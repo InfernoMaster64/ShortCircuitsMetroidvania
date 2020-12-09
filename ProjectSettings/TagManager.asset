@@ -25,6 +25,7 @@ TagManager:
   - Statue_Two
   - Statue_Three
   - WinPanel
+  - Barrier
   layers:
   - Default
   - TransparentFX
