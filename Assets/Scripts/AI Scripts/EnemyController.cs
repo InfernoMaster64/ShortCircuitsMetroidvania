@@ -29,6 +29,7 @@ public class EnemyController : MonoBehaviour
     private bool isActive = false;
     #endregion
 
+    public string tagName = "Enemy";
     // Start is called before the first frame update
     void Start()
     {
@@ -41,7 +42,7 @@ public class EnemyController : MonoBehaviour
         anim.runtimeAnimatorController = enemyData.animControl;
         rend.sprite = enemyData.enemySprite;
         player = GameObject.FindGameObjectWithTag("Player");
-        this.gameObject.layer = 10;
+        //this.gameObject.layer = 10;
         if(enemyData.enemyName == "Boss")
         {
             for(int i = 0; i < waypoints.Length; i++ )
@@ -57,6 +58,7 @@ public class EnemyController : MonoBehaviour
             collide.offset = new Vector2(0.31f, -0.65f);
         }
         rend.sortingOrder = 3;
+        
         /*leftAttack = gameObject.AddComponent<BoxCollider2D>();
         leftAttack.offset = new Vector2(1f, 0f);
         leftAttack.isTrigger = true;
@@ -147,13 +149,17 @@ public class EnemyController : MonoBehaviour
 
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.tag == "bullet")
+        if (collision.transform.tag == "Bullet")
         {
             TakeDamage(10);
+            Debug.Log("Enemy hit from enemy");
+            Destroy(collision.gameObject);
         }
     }
+
+   
 
 
     private void Move()
@@ -267,6 +273,7 @@ public class EnemyController : MonoBehaviour
         if(!isHit && enemyData.enemyName != "Boss")
         {
             isHit = true;
+            Debug.Log("TakeDamage was called");
             //play 'hit' animation
             anim.SetTrigger("IsHit");
             currentHealth -= damage;
@@ -402,6 +409,7 @@ public class EnemyController : MonoBehaviour
     void Death()
     {
         isDead = true;
+        Debug.Log("Death was called");
         if(enemyData.enemyName != "Boss")
         {
             if (enemyData.enemyName == "Skeleton" && timesDead < 1)
@@ -470,9 +478,11 @@ public class EnemyController : MonoBehaviour
     IEnumerator DeathTimer()
     {
         //play death animation
-        anim.SetBool("IsDead", true);
+        //anim.SetBool("IsDead", true);
+        Debug.Log("DeathTimer was called");
+        anim.SetTrigger("DeadTrigger");
         yield return new WaitForSeconds(5);
-        Destroy(this);
+        Destroy(this.gameObject);
     }
 
     IEnumerator AttackCooldown()
@@ -540,7 +550,7 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator HitDuration()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1f);
         isHit = false;
         anim.ResetTrigger("IsHit");
     }

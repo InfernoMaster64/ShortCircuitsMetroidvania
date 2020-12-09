@@ -20,8 +20,9 @@ public class PlayerScript : MonoBehaviour
 
     StatsScript stats;
     CameraScript camera;
-
+    
     Animator anim;
+    SpriteRenderer rend;
 
     public GameObject[] mirrors;
     public GameObject[] mirrorNewPositions;
@@ -29,6 +30,7 @@ public class PlayerScript : MonoBehaviour
 
     public PuzzleScript statue; //This will allow me to call to the Puzzle Code for literlly one line of this script.
 
+    public GameObject bulletPrefab;
     void Start()
     {
         stats = GameObject.Find("playerStats").GetComponent<StatsScript>();
@@ -55,18 +57,21 @@ public class PlayerScript : MonoBehaviour
         speed = stats.MoveSpeed;
 
         anim = gameObject.GetComponent<Animator>();
+        rend = gameObject.GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) //moving
         {
-            transform.localScale = new Vector2(-3, 3);
+            //transform.localScale = new Vector2(-3, 3);
+            rend.flipX = true;
             Move(-speed);
         }
         else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            transform.localScale = new Vector2(3, 3);
+            //transform.localScale = new Vector2(3, 3);
+            rend.flipX = false;
             Move(speed);
         }
         else if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.LeftArrow) //stop moving
@@ -119,12 +124,12 @@ public class PlayerScript : MonoBehaviour
             Interact(triggerObject); //near a door? Press E to enter. Near an NPC? Press E to talk
         }
 
-        if (Input.GetKeyDown(KeyCode.B)) //shooting
+        if (Input.GetKeyDown(KeyCode.Q)) //shooting
         {
             anim.SetBool("Shooting", true);
             Shoot();
         }
-        else if (!Input.GetKeyDown(KeyCode.B)) //not shooting
+        else if (!Input.GetKeyDown(KeyCode.Q)) //not shooting
         {
             anim.SetBool("Shooting", false);
         }
@@ -134,6 +139,8 @@ public class PlayerScript : MonoBehaviour
             TakeDamage(20);
 
         }
+
+
     }
 
     private void OnCollisionEnter2D(Collision2D col) //OnCollision deals with physics, OnTrigger deals with "isTrigger"
@@ -148,11 +155,8 @@ public class PlayerScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other) //make sure TriggerEnter2D, Collider2D other, and objectCollider2D are all the same type
     {
-        if (other.gameObject.tag == "Damage") //This is purely a bool for weapon damage. TakeDamage() checks the type and modifies health 
-        {
-            //TakeDamage();
-        }
-        else if (other.gameObject.tag == "Statue") //This will check to see if the player is at one of the first floor statue - William
+        
+        if (other.gameObject.tag == "Statue") //This will check to see if the player is at one of the first floor statue - William
         {
             interactText.text = "Press 'E' to activate";
             interactText.gameObject.SetActive(true); //Would you beleive me if I told you it took me 15 minutes to realize I forgot this line of code? - William
@@ -260,7 +264,7 @@ public class PlayerScript : MonoBehaviour
 
     void Shoot()
     {
-        if (stats.Ammo > 0)
+        /*if (stats.Ammo > 0)
         {
             stats.Ammo -= 1;
             Debug.Log("Pew pew pew! Ammo remaining: " + stats.Ammo);
@@ -268,7 +272,16 @@ public class PlayerScript : MonoBehaviour
         else
         {
             Debug.Log("Out of ammo!");
+        }*/
+        if(rend.flipX)
+        {
+            Instantiate(bulletPrefab, new Vector2(this.transform.position.x - 1f, this.transform.position.y), Quaternion.Euler(1, 0, 0));
         }
+        else
+        {
+            Instantiate(bulletPrefab, new Vector2(this.transform.position.x + 1f, this.transform.position.y), Quaternion.Euler(0, 0, 0));
+        }
+        
     }
 
     public void TakeDamage(int damage)
