@@ -13,5 +13,5 @@ public class EnemyData : ScriptableObject
     public float speed;
     public int damage;
     public RuntimeAnimatorController animControl;
-    
+    public GameObject arrowPrefab;
 }

@@ -15,8 +15,10 @@ MonoBehaviour:
   enemyName: Archer
   enemySprite: {fileID: 21300000, guid: 51d4c1724c0e08c4bab5f970e4076ea5, type: 3}
   maxHealth: 20
-  attackCooldown: 2
+  attackCooldown: 5
   attackRange: 10
   speed: 3
   damage: 10
   animControl: {fileID: 9100000, guid: 0d6f45fa138e39e4a8f8d71426d43295, type: 2}
+  arrowPrefab: {fileID: 1875968576732055534, guid: 51e6703f4fc6a634d8ca73fa2c6bdf17,
+    type: 3}

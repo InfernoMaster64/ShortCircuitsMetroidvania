@@ -16,6 +16,8 @@ TagManager:
   - Dummy
   - Ground
   - Enemy
+  - Arrow
+  - Bullet
   layers:
   - Default
   - TransparentFX
@@ -27,7 +29,7 @@ TagManager:
   - 
   - Ground
   - Player
-  - 
+  - Enemies
   - 
   - 
   - 
