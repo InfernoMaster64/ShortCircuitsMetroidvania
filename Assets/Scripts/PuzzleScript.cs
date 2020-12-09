@@ -19,7 +19,7 @@ public class PuzzleScript : MonoBehaviour
 
 
     //will be called from the player script once E is pressed on a real statue.
-    void Activation()
+    public void Activation()
     {
         Debug.Log("Let's active some statues!");
         //Changes the statue's sprite to the more active image to show players it's been activated.
