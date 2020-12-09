@@ -24,7 +24,6 @@ TagManager:
   - FlameballSpawn
   - Statue_Two
   - Statue_Three
-  - Barrier
   layers:
   - Default
   - TransparentFX
