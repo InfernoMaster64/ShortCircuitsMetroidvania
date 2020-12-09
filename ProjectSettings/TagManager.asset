@@ -24,6 +24,7 @@ TagManager:
   - FlameballSpawn
   - Statue_Two
   - Statue_Three
+  - WinPanel
   layers:
   - Default
   - TransparentFX

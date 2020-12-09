@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EnemyController : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class EnemyController : MonoBehaviour
     //private BoxCollider2D leftAttack;
     //private BoxCollider2D rightAttack;
     public LayerMask layerMask;
+    BoxCollider2D collide;
 
     private int timesDead = 0;
 
@@ -45,6 +47,7 @@ public class EnemyController : MonoBehaviour
         anim.runtimeAnimatorController = enemyData.animControl;
         rend.sprite = enemyData.enemySprite;
         player = GameObject.FindGameObjectWithTag("Player");
+        winPanel = GameObject.FindGameObjectWithTag("WinPanel");
         //this.gameObject.layer = 10;
         if(enemyData.enemyName == "Boss")
         {
@@ -57,7 +60,7 @@ public class EnemyController : MonoBehaviour
                 flameballSpawns = GameObject.FindGameObjectsWithTag("FlameballSpawn");
             }
         }
-        BoxCollider2D collide = gameObject.AddComponent<BoxCollider2D>();
+        collide = gameObject.AddComponent<BoxCollider2D>();
         collide.size = new Vector2(1, 2);
         if(enemyData.enemyName == "Archer")
         {
@@ -122,7 +125,7 @@ public class EnemyController : MonoBehaviour
             }
             if(enemyData.enemyName != "Archer" && enemyData.enemyName != "Boss" && !isAttacking && !isHit)
             {
-                Move();
+                //Move();
             }
 
 
@@ -541,6 +544,7 @@ public class EnemyController : MonoBehaviour
         //anim.SetBool("IsDead", true);
         Debug.Log("DeathTimer was called");
         anim.SetTrigger("DeadTrigger");
+        collide.enabled = false;
         yield return new WaitForSeconds(5);
         Destroy(this.gameObject);
     }
@@ -559,31 +563,11 @@ public class EnemyController : MonoBehaviour
         {
             Instantiate(enemyData.arrowPrefab, new Vector2(this.transform.position.x + 1f, this.transform.position.y - .5f), Quaternion.Euler(0, 0, 0));
 
-            
-            /*Debug.Log("Before Raycast right");
-            RaycastHit2D hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y - .2f), Vector2.right, 10f);
-            Debug.Log(hit.transform.gameObject.tag);
-            Debug.DrawRay(this.transform.position, Vector2.right, Color.red, 1);
-            Debug.Log("After Raycast right");
-            if (hit.transform.tag == "Player")
-            {
-                Debug.Log("Hit Player");
-                player.GetComponent<PlayerScript>().TakeDamage(enemyData.damage);
-            }*/
         }
         else
         {
             Instantiate(enemyData.arrowPrefab, new Vector2(this.transform.position.x - 1f, this.transform.position.y - .5f), Quaternion.Euler(1, 0, 0));
-            /*Debug.Log("Before Raycast left");
-            RaycastHit2D hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y - .2f), Vector2.left, 10f);
-            Debug.Log(hit.transform.gameObject.tag);
-            Debug.DrawRay(this.transform.position, Vector2.left, Color.red, 1);
-            Debug.Log("After Raycast left");
-            if (hit.transform.tag == "Player")
-            {
-                Debug.Log("Hit Player");
-                player.GetComponent<PlayerScript>().TakeDamage(enemyData.damage);
-            }*/
+            
         }
         
     }
@@ -648,9 +632,9 @@ public class EnemyController : MonoBehaviour
     }
     IEnumerator Winner()
     {
-        winPanel.gameObject.SetActive(true);
+        //winPanel.gameObject.SetActive(true);
         yield return new WaitForSeconds(11f);
-
+        SceneManager.LoadScene(0);
 
     }
 

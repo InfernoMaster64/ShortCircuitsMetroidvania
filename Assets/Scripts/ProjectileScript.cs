@@ -28,19 +28,21 @@ public class ProjectileScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.transform.tag == "Player")
+        if (collision.transform.tag == "Player")
         {
             collision.transform.gameObject.GetComponent<PlayerScript>().TakeDamage(10);
             Destroy(this.gameObject);
         }
-        
-        if(collision.transform.tag == "Ground")
+
+        if (collision.transform.tag == "Ground")
         {
             Destroy(this.gameObject);
         }
-        
+
         Destroy(this.gameObject);
     }
+
+
 
     IEnumerator KillSelf()
     {
