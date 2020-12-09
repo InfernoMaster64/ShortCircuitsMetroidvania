@@ -11,6 +11,7 @@ public class PlayerScript : MonoBehaviour
 
     bool onGround, isJumping;
     float jumpForce, jumpCounter, jumpTime; //power of jumping, current jump time, max jump time
+    bool canAttack = true;
 
     string triggerObject;
     bool nearSomething;
@@ -124,7 +125,7 @@ public class PlayerScript : MonoBehaviour
             Interact(triggerObject); //near a door? Press E to enter. Near an NPC? Press E to talk
         }
 
-        if (Input.GetKeyDown(KeyCode.Q)) //shooting
+        if (Input.GetKeyDown(KeyCode.Q) && canAttack) //shooting
         {
             anim.SetBool("Shooting", true);
             Shoot();
@@ -264,6 +265,7 @@ public class PlayerScript : MonoBehaviour
 
     void Shoot()
     {
+        canAttack = false;
         /*if (stats.Ammo > 0)
         {
             stats.Ammo -= 1;
@@ -276,10 +278,12 @@ public class PlayerScript : MonoBehaviour
         if(rend.flipX)
         {
             Instantiate(bulletPrefab, new Vector2(this.transform.position.x - 1f, this.transform.position.y), Quaternion.Euler(1, 0, 0));
+            StartCoroutine(AttackCooldown());
         }
         else
         {
             Instantiate(bulletPrefab, new Vector2(this.transform.position.x + 1f, this.transform.position.y), Quaternion.Euler(0, 0, 0));
+            StartCoroutine(AttackCooldown());
         }
         
     }
@@ -373,4 +377,11 @@ public class PlayerScript : MonoBehaviour
     {
         transform.position = mirrorNewPositions[mirrorNum].transform.position;
     }
+
+    IEnumerator AttackCooldown()
+    {
+        yield return new WaitForSeconds(.7f);
+        canAttack = true;
+    }
+
 }

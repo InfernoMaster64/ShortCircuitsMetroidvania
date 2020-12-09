@@ -25,8 +25,11 @@ public class EnemyController : MonoBehaviour
 
     #region Boss
     public GameObject[] waypoints = new GameObject[3];
+    public GameObject[] flameballSpawns = new GameObject[24];
     private int phase = 1;
     private bool isActive = false;
+    private int count = 0;
+    private string lastAttack = "Tentacle";
     #endregion
 
     public string tagName = "Enemy";
@@ -49,7 +52,10 @@ public class EnemyController : MonoBehaviour
             {
                 waypoints[i] = GameObject.FindGameObjectWithTag("Waypoint_" + i);
             }
-
+            for(int i = 0; i < flameballSpawns.Length; i++)
+            {
+                flameballSpawns = GameObject.FindGameObjectsWithTag("FlameballSpawn");
+            }
         }
         BoxCollider2D collide = gameObject.AddComponent<BoxCollider2D>();
         collide.size = new Vector2(1, 2);
@@ -76,7 +82,7 @@ public class EnemyController : MonoBehaviour
         {
             float distance = player.transform.position.x - this.transform.position.x;
             
-            if (Mathf.Abs(distance) <= enemyData.attackRange/*(player.transform.position.x <= this.transform.position.x + enemyData.attackRange || player.transform.position.x >= this.transform.position.x - enemyData.attackRange)*/ && player.transform.position.y >= this.transform.position.y - 1.5f && player.transform.position.y <= this.transform.position.y + 1.5f && !isFleeing && !isAttacking && canAttack && !isHit)
+            if (Mathf.Abs(distance) <= enemyData.attackRange && enemyData.enemyName != "Boss"/*(player.transform.position.x <= this.transform.position.x + enemyData.attackRange || player.transform.position.x >= this.transform.position.x - enemyData.attackRange)*/ && player.transform.position.y >= this.transform.position.y - 1.5f && player.transform.position.y <= this.transform.position.y + 1.5f && !isFleeing && !isAttacking && canAttack && !isHit)
             {
                 Attack();
             }
@@ -126,13 +132,17 @@ public class EnemyController : MonoBehaviour
         
         if(enemyData.enemyName == "Boss" && !isActive)
         {
-            if(player.transform.position.x == waypoints[0].transform.position.x && player.transform.position.y >= waypoints[0].transform.position.y - 1f && player.transform.position.y <= waypoints[0].transform.position.y + 1f)
+            if(waypoints[0].gameObject.GetComponent<BossSpawn>().spawned)
             {
                 isActive = true;
+                Debug.Log("Boss is active");
             }
         }
 
-
+        if(enemyData.enemyName == "Boss" && isActive && !isAttacking)
+        {
+            StartCoroutine(BossAttackCycle());
+        }
 
         if(Input.GetKeyDown(KeyCode.P))
         {
@@ -300,7 +310,7 @@ public class EnemyController : MonoBehaviour
                 //teleport to third location
                 this.transform.position = waypoints[2].transform.position;
             }
-            else if(currentHealth <= 0)
+            else if(currentHealth <= 0 && !isDead)
             {
                 Death();
             }
@@ -397,13 +407,34 @@ public class EnemyController : MonoBehaviour
             if(random == 0)
             {
                 //tentacle attack
+                Instantiate(enemyData.tentacle, new Vector2(player.transform.position.x, player.transform.position.y - 1f), Quaternion.Euler(0, 0, 0));
             }
             else
             {
                 //fire rain attack
+                StartCoroutine(FireballSpawning());
+                
             }
         }
 
+    }
+
+    void BossAttack()
+    {
+        int random = Random.Range(0, 2);
+        if (random == 0)
+        {
+            //tentacle attack
+            Instantiate(enemyData.tentacle, new Vector2(player.transform.position.x, player.transform.position.y - 1f), Quaternion.Euler(0, 0, 0));
+            lastAttack = "Tentacle";
+        }
+        else if(random == 1 && lastAttack == "Tentacle")
+        {
+            //fire rain attack
+            lastAttack = "Fireblast";
+            StartCoroutine(FireballSpawning());
+
+        }
     }
 
     void Death()
@@ -424,6 +455,7 @@ public class EnemyController : MonoBehaviour
         else if(enemyData.enemyName == "Boss")
         {
             //do the boss death
+            StartCoroutine(Explosion1());
         }
         
     }
@@ -460,6 +492,34 @@ public class EnemyController : MonoBehaviour
 
 
     #region Enumerators
+
+    IEnumerator FireballSpawning()
+    {
+        yield return new WaitForSeconds(.1f);
+        int random = Random.Range(0, 24);
+        count += 1;
+        Instantiate(enemyData.flameball, flameballSpawns[random].transform.position, Quaternion.Euler(0, 0, 0));
+        if(count < 101)
+        {
+            StartCoroutine(FireballSpawning());
+        }
+        else
+        {
+            count = 0;
+        }
+    }
+
+    IEnumerator BossAttackCycle()
+    {
+        isAttacking = true;
+        yield return new WaitForSeconds(enemyData.attackCooldown);
+        BossAttack();
+        if(!isDead)
+        {
+            StartCoroutine(BossAttackCycle());
+        }
+        
+    }
 
     IEnumerator SkeletonRevive()
     {
@@ -553,6 +613,38 @@ public class EnemyController : MonoBehaviour
         yield return new WaitForSeconds(1f);
         isHit = false;
         anim.ResetTrigger("IsHit");
+    }
+
+    IEnumerator Explosion1()
+    {
+        Instantiate(enemyData.ExplosionHandler, new Vector2(this.transform.position.x + 1, this.transform.position.y + 3), Quaternion.Euler(0,0,0));
+        yield return new WaitForSeconds(1.1f);
+
+        StartCoroutine(Explosion2());
+    }
+    IEnumerator Explosion2()
+    {
+        Instantiate(enemyData.ExplosionHandler1, new Vector2(this.transform.position.x + .5f, this.transform.position.y), Quaternion.Euler(0, 0, 0));
+        yield return new WaitForSeconds(1.6f);
+
+
+        StartCoroutine(Explosion3());
+    }
+    IEnumerator Explosion3()
+    {
+        Instantiate(enemyData.ExplosionHandler2, new Vector2(this.transform.position.x, this.transform.position.y + 1), Quaternion.Euler(0, 0, 0));
+        yield return new WaitForSeconds(1.6f);
+
+
+        StartCoroutine(ExplosionFinal());
+    }
+    IEnumerator ExplosionFinal()
+    {
+        Instantiate(enemyData.ExplosionHandler3, new Vector2(this.transform.position.x + .7f, this.transform.position.y + .7f), Quaternion.Euler(0, 0, 0));
+        yield return new WaitForSeconds(11f);
+        
+
+        //call the new scene
     }
 
     #endregion

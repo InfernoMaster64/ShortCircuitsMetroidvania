@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e29a1d26fe71c5a4aa3e3a5c4d7c3b37, type: 3}
+  m_Name: BossEnemyData
+  m_EditorClassIdentifier: 
+  enemyName: Boss
+  enemySprite: {fileID: 7942859758497058819, guid: aa09f1d479dba4f4188c7aa94a7a5316,
+    type: 3}
+  maxHealth: 0
+  attackCooldown: 5
+  attackRange: 0
+  speed: 0
+  damage: 0
+  animControl: {fileID: 9100000, guid: 247b5eaf04466e642a9bb4da0b8abb22, type: 2}
+  arrowPrefab: {fileID: 0}
+  flameball: {fileID: 1409759264547790507, guid: d9649cc2bba2464419afce2820f1f401,
+    type: 3}
+  tentacle: {fileID: 3254199014661288239, guid: df804307dc9dea540ad802dca77fdf67,
+    type: 3}
+  ExplosionHandler: {fileID: 68544479044223571, guid: 6d579f1670c4dc94baedc003d7ecb9b5,
+    type: 3}
+  ExplosionHandler1: {fileID: 5131986807972566529, guid: f19912fd5b81fb747b2f13259dc59dda,
+    type: 3}
+  ExplosionHandler2: {fileID: 164919338196240954, guid: be85e117db646a241ab2f832b2e0296d,
+    type: 3}
+  ExplosionHandler3: {fileID: 473494050203590571, guid: 68c65fd6085d76a4eb887af0209be1a1,
+    type: 3}

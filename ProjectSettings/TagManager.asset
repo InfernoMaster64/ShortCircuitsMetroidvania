@@ -18,6 +18,10 @@ TagManager:
   - Enemy
   - Arrow
   - Bullet
+  - Waypoint_0
+  - Waypoint_1
+  - Waypoint_2
+  - FlameballSpawn
   layers:
   - Default
   - TransparentFX

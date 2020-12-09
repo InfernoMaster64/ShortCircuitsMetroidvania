@@ -14,4 +14,10 @@ public class EnemyData : ScriptableObject
     public int damage;
     public RuntimeAnimatorController animControl;
     public GameObject arrowPrefab;
+    public GameObject flameball;
+    public GameObject tentacle;
+    public GameObject ExplosionHandler;
+    public GameObject ExplosionHandler1;
+    public GameObject ExplosionHandler2;
+    public GameObject ExplosionHandler3;
 }
