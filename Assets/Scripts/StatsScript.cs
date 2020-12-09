@@ -15,6 +15,8 @@ public class StatsScript : MonoBehaviour
     bool[] hasBossKeys = new bool [3]; //three main areas
     bool[] hasKeys;
 
+    public Vector2 respawn = new Vector2 (-4,0); //initial spawn location, to be changed with statues
+
     private void Awake()
     {
         if (instance == null) //prevents duplicate stat objects

@@ -5,16 +5,13 @@ using UnityEngine;
 public class PuzzleScript : MonoBehaviour
 {
     bool f2Lever, f3Lever, f1puzzle = false;
-    GameObject Statue1, Statue2, Statue3;
+    public GameObject Statue1, Statue2, Statue3;
     public Sprite active;
 
     // Start is called before the first frame update
     void Start()
     {
-        //Statues now get picked up as.. well the stautes. the Dummy statues shall be ignored as they do absolutly nothing.
-        Statue1 = GameObject.Find("Statue 1");
-        Statue2 = GameObject.Find("Statue 2");
-        Statue3 = GameObject.Find("Statue 3");
+
     }
 
 
