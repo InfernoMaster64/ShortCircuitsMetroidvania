@@ -27,6 +27,8 @@ public class PlayerScript : MonoBehaviour
     public GameObject[] mirrorNewPositions;
     int mirrorNum;
 
+    public PuzzleScript statue; //This will allow me to call to the Puzzle Code for literlly one line of this script.
+
     void Start()
     {
         stats = GameObject.Find("playerStats").GetComponent<StatsScript>();
@@ -311,8 +313,10 @@ public class PlayerScript : MonoBehaviour
                 Debug.Log("Used the mirror!");
                 Teleport();
                 break;
+                //Will - Need this for the Statues to be activated.
             case "Statue":
                 Debug.Log("Let's Activtion!");
+                statue.Activation();
                 break;
         }
     }
