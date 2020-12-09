@@ -28,6 +28,8 @@ public class PlayerScript : MonoBehaviour
     public GameObject[] mirrorNewPositions;
     int mirrorNum;
 
+    Vector2 respawnPos;
+
     public PuzzleScript statue; //This will allow me to call to the Puzzle Code for literlly one line of this script.
 
     public GameObject bulletPrefab;
@@ -58,6 +60,8 @@ public class PlayerScript : MonoBehaviour
 
         anim = gameObject.GetComponent<Animator>();
         rend = gameObject.GetComponent<SpriteRenderer>();
+
+        transform.position = stats.respawn;
     }
 
     void Update()
@@ -170,6 +174,11 @@ public class PlayerScript : MonoBehaviour
         {
             interactText.text = "Press 'E' to set spawn";
             interactText.gameObject.SetActive(true); //Would you beleive me if I told you it took me 15 minutes to realize I forgot this line of code? - William
+
+            triggerObject = other.gameObject.tag;
+            nearSomething = true;
+
+            respawnPos = other.gameObject.transform.position;
         }
         else if (other.gameObject.tag == "MirrorPuzzle") //keep camera in fixed positions within the second puzzle room
         {
@@ -218,14 +227,16 @@ public class PlayerScript : MonoBehaviour
             nearSomething = false;
             interactText.gameObject.SetActive(false);
         }
-        else
-        {
-
-        }
 
         if (other.gameObject.tag == "MirrorPuzzle")
         {
             camera.lockCamera = false;
+        }
+        else if (other.gameObject.tag == "Respawn")
+        {
+            respawnPos = stats.respawn;
+            triggerObject = "";
+            nearSomething = false;
         }
 
     }
@@ -310,15 +321,6 @@ public class PlayerScript : MonoBehaviour
             case "Castle":
                 Debug.Log("You entered the creepy " + type);
                 break;
-            case "Crypt":
-                Debug.Log("You entered the haunted " + type);
-                break;
-            case "Swamp":
-                Debug.Log("You entered the spooky " + type);
-                break;
-            case "Town":
-                Debug.Log("You entered the boring " + type);
-                break;
             case "NPC": //temporary term
                 Debug.Log("Dab");
                 break;
@@ -330,6 +332,10 @@ public class PlayerScript : MonoBehaviour
             case "Statue":
                 Debug.Log("Let's Activtion!");
                 statue.Activation();
+                break;
+            case "Respawn":
+                Debug.Log("So... How was the dying?");
+                stats.respawn = respawnPos; //permanently set spawn, until permanently set again
                 break;
         }
     }
