@@ -4,11 +4,27 @@ using UnityEngine;
 
 public class PuzzleScript : MonoBehaviour
 {
-    bool f2Lever, f3Lever, f1puzzle = false;
+    private static PuzzleScript instance;
+
+    bool f2Lever, f3Lever = false;
+    public bool f1puzzle = false;
     public GameObject Statue1, Statue2, Statue3;
     public Sprite active;
     public GameObject barrier;
 
+
+    private void Awake()
+    {
+        if (instance == null) //prevents duplicate stat objects
+        {
+            instance = this;
+            DontDestroyOnLoad(this);
+        }
+        else
+        {
+            Object.Destroy(gameObject);
+        }
+    }
 
     //will be called from the player script once E is pressed on a real statue.
     public void Activation()
@@ -35,8 +51,9 @@ public class PuzzleScript : MonoBehaviour
         CheckStatue();
     }
 
-    void CheckStatue()
+    public void CheckStatue()
     {
+        barrier = GameObject.FindGameObjectWithTag("Barrier");
         Debug.Log("Are they activated?");
         if (Statue1.GetComponent<SpriteRenderer>().sprite == active && Statue2.GetComponent<SpriteRenderer>().sprite == active && Statue3.GetComponent<SpriteRenderer>().sprite == active)
         {

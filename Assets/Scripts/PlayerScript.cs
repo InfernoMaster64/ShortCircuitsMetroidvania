@@ -63,6 +63,8 @@ public class PlayerScript : MonoBehaviour
         rend = gameObject.GetComponent<SpriteRenderer>();
 
         transform.position = stats.respawn;
+
+        PuzzleController.GetComponent<PuzzleScript>().CheckStatue();
     }
 
     void Update()
