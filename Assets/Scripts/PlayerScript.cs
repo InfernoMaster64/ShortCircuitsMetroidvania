@@ -24,12 +24,16 @@ public class PlayerScript : MonoBehaviour
     
     Animator anim;
     SpriteRenderer rend;
+    AudioSource source;
 
     public GameObject[] mirrors;
     public GameObject[] mirrorNewPositions;
     int mirrorNum;
 
     Vector2 respawnPos;
+
+    public AudioClip[] sfx;
+    bool footstepsActive;
 
     public GameObject PuzzleController; //This will allow me to call to the Puzzle Code for literlly one line of this script.
 
@@ -62,10 +66,9 @@ public class PlayerScript : MonoBehaviour
 
         anim = gameObject.GetComponent<Animator>();
         rend = gameObject.GetComponent<SpriteRenderer>();
+        source = gameObject.GetComponent<AudioSource>();
 
         transform.position = stats.respawn;
-
-
     }
 
     void Update()
@@ -86,6 +89,12 @@ public class PlayerScript : MonoBehaviour
             && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.RightArrow))
         {
             anim.SetBool("Movement", false);
+
+            if (footstepsActive)
+            {
+                footstepsActive = false;
+                source.Stop();
+            }
         }
 
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) //crouching
@@ -105,6 +114,7 @@ public class PlayerScript : MonoBehaviour
             anim.SetBool("Grounded", false);
             anim.SetBool("Jumping", true);
             jumpCounter = jumpTime;
+            source.PlayOneShot(sfx[2]);
         }
         if (Input.GetKey(KeyCode.Space) && isJumping) //tap space to jump, hold space to jump higher
         {
@@ -145,7 +155,6 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Backspace)) //temp code start
         {
             TakeDamage(20);
-
         }
 
 
@@ -299,10 +308,17 @@ public class PlayerScript : MonoBehaviour
     {
         transform.position = new Vector3(transform.position.x + (direction * Time.deltaTime), transform.position.y, transform.position.z);
         anim.SetBool("Movement", true);
+
+        if (!footstepsActive)
+        {
+            footstepsActive = true;
+            source.Play();
+        }
     }
 
     void Shoot()
     {
+        source.PlayOneShot(sfx[1]);
         canAttack = false;
         /*if (stats.Ammo > 0)
         {
@@ -328,13 +344,14 @@ public class PlayerScript : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        source.PlayOneShot(sfx[3]);
         anim.SetBool("TakingDamage", true);
-        healthSlider.value -= damage; //TEMPORARY
+        healthSlider.value -= damage;
         speed = 0;
 
         if (healthSlider.value == 0)
         {
-            Invoke("TempResetPlayer", 1.5f); //TEMPORARY
+            Invoke("TempResetPlayer", 1.5f);
             InvokeRepeating("DeathAnimation", 0, .1f);
             rigid.isKinematic = true;
         }
@@ -429,5 +446,4 @@ public class PlayerScript : MonoBehaviour
         yield return new WaitForSeconds(.7f);
         canAttack = true;
     }
-
 }
