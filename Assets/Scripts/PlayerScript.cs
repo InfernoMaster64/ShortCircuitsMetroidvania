@@ -93,6 +93,7 @@ public class PlayerScript : MonoBehaviour
             if (footstepsActive)
             {
                 footstepsActive = false;
+                CancelInvoke(); //stop footsteps when player stops moving
                 source.Stop();
             }
         }
@@ -114,7 +115,11 @@ public class PlayerScript : MonoBehaviour
             anim.SetBool("Grounded", false);
             anim.SetBool("Jumping", true);
             jumpCounter = jumpTime;
-            source.PlayOneShot(sfx[2]);
+            
+            source.clip = sfx[2]; //The footstep sound is connected to jumping so they can only be heard when onGround = true
+            source.Play();
+            footstepsActive = true;
+            CancelInvoke();
         }
         if (Input.GetKey(KeyCode.Space) && isJumping) //tap space to jump, hold space to jump higher
         {
@@ -167,6 +172,7 @@ public class PlayerScript : MonoBehaviour
             anim.SetBool("Falling", false);
             anim.SetBool("Grounded", true);
             onGround = true;
+            footstepsActive = false;
         }
     }
 
@@ -309,11 +315,14 @@ public class PlayerScript : MonoBehaviour
         transform.position = new Vector3(transform.position.x + (direction * Time.deltaTime), transform.position.y, transform.position.z);
         anim.SetBool("Movement", true);
 
-        if (!footstepsActive)
+        if (!footstepsActive && onGround)
         {
             footstepsActive = true;
+            source.clip = sfx[0];
+            InvokeRepeating("PlayFootstepSound", 0, source.clip.length - .925f); //since the clip barely doesn't loop perfectly, use invoke to make it perfect
             source.Play();
         }
+
     }
 
     void Shoot()
@@ -445,5 +454,10 @@ public class PlayerScript : MonoBehaviour
     {
         yield return new WaitForSeconds(.7f);
         canAttack = true;
+    }
+
+    void PlayFootstepSound()
+    {
+        source.Play();
     }
 }
