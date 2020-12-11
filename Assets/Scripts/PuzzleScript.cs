@@ -8,7 +8,7 @@ public class PuzzleScript : MonoBehaviour
 
     bool f2Lever, f3Lever = false;
     public bool f1puzzle = false;
-    public GameObject Statue1, Statue2, Statue3;
+    public GameObject Statue1, Statue2, Statue3, Floor2Statue;
     public Sprite active;
     GameObject barrier;
 
@@ -37,24 +37,31 @@ public class PuzzleScript : MonoBehaviour
         CheckStatue();
     }
 
+    public void ActivateMirror()
+    {
+        Debug.Log("Door Puzzle Finish!");
+        Floor2Statue.GetComponent<SpriteRenderer>().sprite = active;
+        f2Lever = true;
+        Barrier();
+    }
+
     public void CheckStatue()
     {
         Debug.Log("Are they activated?");
         if (Statue1.GetComponent<SpriteRenderer>().sprite == active && Statue2.GetComponent<SpriteRenderer>().sprite == active && Statue3.GetComponent<SpriteRenderer>().sprite == active)
         {
             f1puzzle = true;
-            Barrier(false);
+            Barrier();
         }
     }
 
-    public void Barrier(bool repawnThree)
+    public void Barrier()
     {
-        Debug.Log("Path OPEN");
-        barrier = GameObject.FindGameObjectWithTag("Barrier");
-        Debug.Log("Barrier found");
-        if (f1puzzle == true)
+        if (f1puzzle && f2Lever)
         {
-            Debug.Log("Bye Bye");
+            Debug.Log("Path OPEN");
+            barrier = GameObject.FindGameObjectWithTag("Barrier");
+            Debug.Log("Barrier found");
             barrier.gameObject.SetActive(false);
             Debug.Log("To the Boss");
         }
