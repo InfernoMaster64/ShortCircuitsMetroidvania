@@ -20,4 +20,5 @@ public class EnemyData : ScriptableObject
     public GameObject ExplosionHandler1;
     public GameObject ExplosionHandler2;
     public GameObject ExplosionHandler3;
+    public AudioClip[] enemyAudio;
 }

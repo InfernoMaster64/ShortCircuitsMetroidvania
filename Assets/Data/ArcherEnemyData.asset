@@ -22,3 +22,12 @@ MonoBehaviour:
   animControl: {fileID: 9100000, guid: 0d6f45fa138e39e4a8f8d71426d43295, type: 2}
   arrowPrefab: {fileID: 1875968576732055534, guid: 51e6703f4fc6a634d8ca73fa2c6bdf17,
     type: 3}
+  flameball: {fileID: 0}
+  tentacle: {fileID: 0}
+  ExplosionHandler: {fileID: 0}
+  ExplosionHandler1: {fileID: 0}
+  ExplosionHandler2: {fileID: 0}
+  ExplosionHandler3: {fileID: 0}
+  enemyAudio:
+  - {fileID: 8300000, guid: c95c5b4d1cc36ba478ceeb09a9ebb6fb, type: 3}
+  - {fileID: 8300000, guid: df7bbcbe0dc09854296a0f5a133bb6bb, type: 3}

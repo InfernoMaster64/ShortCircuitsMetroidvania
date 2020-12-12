@@ -14,6 +14,7 @@ public class EnemyController : MonoBehaviour
     //private BoxCollider2D rightAttack;
     public LayerMask layerMask;
     BoxCollider2D collide;
+    AudioSource aSource;
 
     private int timesDead = 0;
 
@@ -31,6 +32,7 @@ public class EnemyController : MonoBehaviour
     private int phase = 1;
     private bool isActive = false;
     private int count = 0;
+    int audioCount = 0;
     private string lastAttack = "Tentacle";
     #endregion
 
@@ -43,6 +45,7 @@ public class EnemyController : MonoBehaviour
         layerMask = LayerMask.NameToLayer("Player");
         rend = gameObject.AddComponent<SpriteRenderer>();
         anim = gameObject.AddComponent<Animator>();
+        aSource = gameObject.AddComponent<AudioSource>();
         //set the animator based on the enemyName
         anim.runtimeAnimatorController = enemyData.animControl;
         rend.sprite = enemyData.enemySprite;
@@ -286,6 +289,8 @@ public class EnemyController : MonoBehaviour
         if(!isHit && enemyData.enemyName != "Boss")
         {
             isHit = true;
+            aSource.clip = enemyData.enemyAudio[1];
+            aSource.Play();
             Debug.Log("TakeDamage was called");
             //play 'hit' animation
             anim.SetTrigger("IsHit");
@@ -500,11 +505,48 @@ public class EnemyController : MonoBehaviour
     {
         yield return new WaitForSeconds(.1f);
         int random = Random.Range(0, 24);
+        
         count += 1;
         Instantiate(enemyData.flameball, flameballSpawns[random].transform.position, Quaternion.Euler(0, 0, 0));
-        if(count < 101)
+        if(count < 81)
         {
             StartCoroutine(FireballSpawning());
+            audioCount++;
+            switch(audioCount)
+            {
+                case 10:
+                    aSource.clip = enemyData.enemyAudio[0];
+                    aSource.Play();
+                    break;
+                case 20:
+                    aSource.clip = enemyData.enemyAudio[0];
+                    aSource.Play();
+                    break;
+                case 30:
+                    aSource.clip = enemyData.enemyAudio[0];
+                    aSource.Play();
+                    break;
+                case 40:
+                    aSource.clip = enemyData.enemyAudio[0];
+                    aSource.Play();
+                    break;
+                case 50:
+                    aSource.clip = enemyData.enemyAudio[0];
+                    aSource.Play();
+                    break;
+                case 60:
+                    aSource.clip = enemyData.enemyAudio[0];
+                    aSource.Play();
+                    break;
+                case 70:
+                    aSource.clip = enemyData.enemyAudio[0];
+                    aSource.Play();
+                    break;
+                case 80:
+                    aSource.clip = enemyData.enemyAudio[0];
+                    aSource.Play();
+                    break;
+            }
         }
         else
         {
@@ -543,6 +585,8 @@ public class EnemyController : MonoBehaviour
         //play death animation
         //anim.SetBool("IsDead", true);
         Debug.Log("DeathTimer was called");
+        aSource.clip = enemyData.enemyAudio[0];
+        aSource.Play();
         anim.SetTrigger("DeadTrigger");
         collide.enabled = false;
         yield return new WaitForSeconds(5);

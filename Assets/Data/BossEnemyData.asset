@@ -34,3 +34,5 @@ MonoBehaviour:
     type: 3}
   ExplosionHandler3: {fileID: 473494050203590571, guid: 68c65fd6085d76a4eb887af0209be1a1,
     type: 3}
+  enemyAudio:
+  - {fileID: 8300000, guid: af040aa6b2d9e654bbcc17cfe78b6c7c, type: 3}
