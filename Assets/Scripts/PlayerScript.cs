@@ -162,7 +162,12 @@ public class PlayerScript : MonoBehaviour
             TakeDamage(20);
         }
 
-
+        if (healthSlider.value <= 0) //death animation override
+        {
+            Invoke("ResetPlayer", 1.5f);
+            InvokeRepeating("DeathAnimation", 0, .1f);
+            rigid.isKinematic = true;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D col) //OnCollision deals with physics, OnTrigger deals with "isTrigger"
@@ -173,6 +178,7 @@ public class PlayerScript : MonoBehaviour
             anim.SetBool("Grounded", true);
             onGround = true;
             footstepsActive = false;
+            StopTakingDamage();
         }
     }
 
@@ -354,21 +360,23 @@ public class PlayerScript : MonoBehaviour
     public void TakeDamage(int damage)
     {
         source.PlayOneShot(sfx[3]);
-        anim.SetBool("TakingDamage", true);
         healthSlider.value -= damage;
+        anim.SetBool("TakingDamage", true);
+        gameObject.GetComponent<Renderer>().material.color = Color.red;
         speed = 0;
+        anim.SetBool("Movement", false);
 
-        if (healthSlider.value == 0)
+        if (healthSlider.value <= 0) //something is causing this IF statement to not call sometimes, and I want to know what it is
         {
-            Invoke("TempResetPlayer", 1.5f);
+            Invoke("ResetPlayer", 1.5f);
             InvokeRepeating("DeathAnimation", 0, .1f);
             rigid.isKinematic = true;
         }
         else
         {
-            Invoke("StopTakingDamage", .20f);
+            Invoke("StopTakingDamage", .2f);
         }
-        
+
     }
 
     void Interact(string type) //near a door? Tell the player to press "E" to go through it
@@ -429,9 +437,20 @@ public class PlayerScript : MonoBehaviour
     {
         anim.SetBool("TakingDamage", false);
         speed = stats.MoveSpeed;
+        if (!onGround)
+        {
+            anim.SetBool("Jumping", false);
+            anim.SetBool("Falling", true);
+            anim.SetBool("Grounded", false);
+        }
+        else
+        {
+
+        }
+        gameObject.GetComponent<Renderer>().material.color = Color.white;
     }
 
-    void TempResetPlayer()
+    void ResetPlayer()
     {
         StopTakingDamage();
 
